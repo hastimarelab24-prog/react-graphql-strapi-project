@@ -27,7 +27,7 @@ function Accordion() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-16">
       {/*  HEADING  */}
       <div className="flex items-center justify-between bg-slate-300 px-9 py-10">
         <h4 className="text-2xl font-bold text-black">Accordion</h4>

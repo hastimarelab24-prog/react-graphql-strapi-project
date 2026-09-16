@@ -1,104 +1,172 @@
-
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuthActions } from "../hooks/useAuthActions";
+import { useMutation } from "@apollo/client/react";
+import { RESET_PASSWORD } from "../gqloperation/mutation";
 
 function ResetPassword() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const code = searchParams.get("code") || "";
+
+  // Extract reset code/token from URL (e.g., /reset-password?code=xyz)
+  const code = searchParams.get("code");
 
   const [formData, setFormData] = useState({
     password: "",
-    passwordConfirmation: "",
+    confirmPassword: "",
   });
+  const [validationError, setValidationError] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  const { confirmPasswordReset, loading, error } = useAuthActions();
+  const [resetPassword, { loading, error }] = useMutation(RESET_PASSWORD);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (validationError) setValidationError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!code) {
-      alert("Missing reset code in URL. Please use the link sent to your email.");
+      setValidationError("Invalid or missing reset token. Please request a new password reset link.");
       return;
     }
 
-    if (formData.password !== formData.passwordConfirmation) {
-      alert("Passwords do not match!");
+    if (formData.password.length < 6) {
+      setValidationError("Password must be at least 6 characters long.");
       return;
     }
 
-    const result = await confirmPasswordReset(
-      formData.password,
-      formData.passwordConfirmation,
-      code
-    );
+    if (formData.password !== formData.confirmPassword) {
+      setValidationError("Passwords do not match.");
+      return;
+    }
 
-    if (result.success) {
-      alert("Password updated successfully!");
-      navigate("/");
+    try {
+      await resetPassword({
+        variables: {
+          code: code,
+          password: formData.password,
+          passwordConfirmation: formData.confirmPassword,
+        },
+      });
+      setIsSuccess(true);
+    } catch (err) {
+      console.error("Reset Password Error:", err.message);
     }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">
-      <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 shadow-xl">
-        <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
-          Reset Password
-        </h1>
-        <p className="mb-6 text-center text-sm text-gray-500">
-          Enter your new password below.
-        </p>
+      <div className="w-full max-w-md">
+        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-xl">
+          {!isSuccess ? (
+            <>
+              {/* Header */}
+              <div className="mb-8 text-center">
+                <h1 className="text-3xl font-bold text-gray-900">Reset Password</h1>
+                <p className="mt-2 text-sm text-gray-500">
+                  Enter your new password below to reset your account credentials.
+                </p>
+              </div>
 
-        {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-3 text-center text-sm font-medium text-red-600">
-            {error}
-          </div>
-        )}
+              {/* GraphQL / Backend Error */}
+              {error && (
+                <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-center">
+                  <p className="text-sm font-medium text-red-600">{error.message}</p>
+                </div>
+              )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              New Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter new password"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-black focus:ring-2 focus:ring-gray-200"
-            />
-          </div>
+              {/* Form Validation Error */}
+              {validationError && (
+                <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-center">
+                  <p className="text-sm font-medium text-red-600">{validationError}</p>
+                </div>
+              )}
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Confirm New Password
-            </label>
-            <input
-              type="password"
-              name="passwordConfirmation"
-              required
-              value={formData.passwordConfirmation}
-              onChange={handleChange}
-              placeholder="Confirm new password"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-black focus:ring-2 focus:ring-gray-200"
-            />
-          </div>
+              {/* Form Inputs */}
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="mb-2 block text-sm font-medium text-gray-600"
+                  >
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter new password"
+                    required
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-black focus:ring-2 focus:ring-gray-200"
+                  />
+                </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:opacity-60"
-          >
-            {loading ? "Resetting Password..." : "Reset Password"}
-          </button>
-        </form>
+                <div>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="mb-2 block text-sm font-medium text-gray-600"
+                  >
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm new password"
+                    required
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-black focus:ring-2 focus:ring-gray-200"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? "Updating Password..." : "Reset Password"}
+                </button>
+              </form>
+            </>
+          ) : (
+            /* Success State */
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-green-600">
+                <svg
+                  className="h-8 w-8"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+
+              <h2 className="text-2xl font-bold text-gray-900">Password Updated!</h2>
+              <p className="mt-2 text-sm text-gray-500">
+                Your password has been successfully reset. You can now log in with your new password.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="mt-6 w-full rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+              >
+                Go to Login
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

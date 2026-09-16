@@ -3,17 +3,32 @@ import React, { useEffect, useState } from "react";
 import { SEARCH_PRODUCTS } from "../gqloperation/queries";
 
 function useProductSearch() {
-  const [search, setSearch] = useState("");
-  const [delaySearch, setDelaySearch] = useState("");
+  // refersh page to search value get
+  const [search, setSearch] = useState(() => {
+    return sessionStorage.getItem("search") || "";
+  });
+  // initial search string set
+  const [delaySearch, setDelaySearch] = useState(() => {
+    return sessionStorage.getItem("search" || "");
+  });
 
+  // search save karo
   useEffect(() => {
-    setDelaySearch("");
-    if (search.trim() === "") {
+    const trimmedSearch = search.trim();
+    // setDelaySearch("");
+    if (trimmedSearch === "") {
+      setDelaySearch("");
+      sessionStorage.removeItem("search");
       return;
     }
+
+    // search save kro
+    sessionStorage.setItem("search", trimmedSearch);
+    // previous timer clear 2s wait
     const timer = setTimeout(() => {
-      setDelaySearch(search.trim());
+      setDelaySearch(trimmedSearch);
     }, 2000);
+
     return () => clearTimeout(timer);
   }, [search]);
 
@@ -21,14 +36,16 @@ function useProductSearch() {
     variables: {
       search: delaySearch,
     },
-    skip: delaySearch.trim() === "",
+    skip: !delaySearch || delaySearch.trim() === "",
   });
-  
+
   const products = data?.products || [];
 
+  // serach clear
   const clearSearch = () => {
     setSearch("");
     setDelaySearch("");
+    sessionStorage.removeItem("serach");
   };
   return {
     search,

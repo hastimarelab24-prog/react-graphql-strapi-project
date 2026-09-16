@@ -4,7 +4,7 @@ import { AiOutlineCheck } from "react-icons/ai";
 import { blogData } from "./Details";
 function Portfolio() {
   return (
-    <div>
+    <div className="mt-16">
         {/* Heading  */}
       <div className="flex items-center justify-between bg-slate-300 px-9 py-10">
         <h4 className="text-2xl font-bold text-black">Portfolio</h4>

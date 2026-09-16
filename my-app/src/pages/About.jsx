@@ -3,7 +3,7 @@ import React from "react";
 
 function About() {
   return (
-    <div className="bg-white text-gray-800">
+    <div className="bg-white text-gray-800 mt-16">
       {/* Hero Section */}
 
       {/* <section className="bg-white py-16">

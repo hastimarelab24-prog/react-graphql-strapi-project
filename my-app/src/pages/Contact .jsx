@@ -54,7 +54,7 @@ function Contact() {
     }
   };
   return (
-    <div>
+    <div className="mt-16">
       {/* HEADER */}
       <div className="flex items-center justify-between bg-slate-300 px-9 py-10">
         <h4 className="text-2xl font-bold text-black">Contact</h4>

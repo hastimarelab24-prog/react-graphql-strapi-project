@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN_USER } from "../gqloperation/mutation";
 
 function Login() {
   const navigate = useNavigate();
+  const location=useLocation();
+
 
   const [formData, setFormData] = useState({
     identifier: "",
@@ -15,10 +17,18 @@ function Login() {
 
   // Auth check & redirect on success
   useEffect(() => {
-    if (data?.login?.jwt) {
-      localStorage.setItem("token", data.login.jwt);
+    if (data?.login) {
+      // login jwt token saving
+      localStorage.setItem("jwt", data.login.jwt);
+
+      // checkout user saving information 
+      localStorage.setItem("user",JSON.stringify(data.login.user))
+      // Notify navbar
       window.dispatchEvent(new Event("authChange"));
-      navigate("/");
+        // redirect to checkout if user came from checkout
+      navigate(location.state?.form || "/",{
+        replace:true,
+      });
     }
   }, [data, navigate]);
 

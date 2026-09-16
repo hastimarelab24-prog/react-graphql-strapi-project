@@ -1,45 +1,47 @@
-import React from 'react';
-import Home from './pages/Home';
-import './App.css';
-import Navbar from './components/Navbar';
+import React from "react";
+import Home from "./pages/Home";
+import "./App.css";
+import Navbar from "./components/Navbar";
 
-import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
-import { ApolloProvider } from '@apollo/client/react';
-import { BrowserRouter,useLocation,useRoutes } from 'react-router-dom';
-import routes from './routes'; // Import your routes configuration
-import Category from './components/Category';
-import Footer from './components/Footer';
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
+import { BrowserRouter, useLocation, useRoutes } from "react-router-dom";
+import routes from "./routes"; // Import your routes configuration
+import Category from "./components/Category";
+import Footer from "./components/Footer";
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: 'http://localhost:1337/graphql',
+    uri: "http://localhost:1337/graphql",
   }),
   cache: new InMemoryCache(),
 });
 
 // Function Router
-const Routes=()=>{
- const elements = useRoutes(routes);
- const location=useLocation();
+const Routes = () => {
+  const elements = useRoutes(routes);
+  const location = useLocation();
 
- const hideLayout=location.pathname==="/login" || location.pathname==="/signup";
-  return(
+  const hideLayout =
+    location.pathname === "/login" ||
+    location.pathname === "/signup" ||
+    location.pathname === "/reset-password" ||
+    location.pathname==="/checkout";
+  return (
     <>
-
-{!hideLayout && <Navbar/>}
+      {!hideLayout && <Navbar />}
       {elements}
       {/* <Category/> */}
-{!hideLayout && <Footer/>}
+      {!hideLayout && <Footer />}
     </>
-   
-  )
-}
+  );
+};
 
 function App() {
   return (
     <BrowserRouter>
-    <ApolloProvider client={client}>
-      <Routes />
-    </ApolloProvider>
+      <ApolloProvider client={client}>
+        <Routes />
+      </ApolloProvider>
     </BrowserRouter>
   );
 }

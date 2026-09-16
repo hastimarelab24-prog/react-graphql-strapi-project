@@ -16,6 +16,10 @@ import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact ";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ForgotPassword from "./pages/ForgetPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Wishlist from "./pages/wishlist";
+import Checkout from "./components/CheckoutFrom";
 const routes = [
   <Navbar/>,
   {
@@ -25,6 +29,10 @@ const routes = [
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path:"/reset-password",
+    element:<ResetPassword/>
   },
   {
     path: "/signup",
@@ -79,6 +87,14 @@ const routes = [
   },{
     path:"/contact",
     element:<Contact/>
+  },
+  {
+    path:"/wishlist",
+    element:<Wishlist/>
+  },
+  {
+path:"/checkout",
+element:<Checkout/>
   },
   <Footer/>
 ];

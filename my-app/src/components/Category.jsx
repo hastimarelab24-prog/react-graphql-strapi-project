@@ -58,7 +58,7 @@ function Category() {
    productsdata?.products || []: allProductsData?.products ||[];
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen mt-16 bg-stone-50">
       {/* Header */}
       <section className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center">

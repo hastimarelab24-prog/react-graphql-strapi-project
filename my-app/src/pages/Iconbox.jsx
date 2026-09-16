@@ -10,7 +10,7 @@ import { AiFillFlag } from "react-icons/ai";
 
 function Iconbox() {
   return (
-    <div className="w-full">
+    <div className="w-full mt-24">
       {/* heading */}
       <div className="flex items-center justify-between bg-slate-300 px-9 py-10">
         <h4 className="text-2xl font-bold text-black">Icon Box</h4>

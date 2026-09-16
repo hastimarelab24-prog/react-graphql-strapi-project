@@ -105,7 +105,7 @@ function Shop() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white  mt-24">
       {/* //   HEADER */}
       <div className="bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-[1500px]">
@@ -391,7 +391,7 @@ function Shop() {
                     `
                     : `
                       grid
-                      grid-cols-1
+                      grid-cols-3
                       gap-6
                     `
                 }
