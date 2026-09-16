@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Testimonials from "./testimonials";
 import FeaturedProducts from "./FeaturedProducts";
 import Blog from "../components/Blog";
+import { brands } from "./Details";
 import { GET_ALL_PRODUCTS } from "../gqloperation/queries";
 // import Card from "../components/Card";
 
@@ -86,248 +87,352 @@ function Home() {
 
       {/* Shop by categroy   */}
 
-      <section className="mb-12 p-6">
-        {/* Heading */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <p className="mb-1 text-sm font-semibold uppercase tracking-wider text-blue-600"></p>
-            <h2 className="text-3xl font-bold text-gray-900">
-              Shop By Category
-            </h2>
+      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50/50 via-white to-slate-50/50 py-12 px-4 sm:px-6 lg:px-8">
+        {/* BACKGROUND GLOW ACCENTS */}
+        <div className="absolute top-0 left-1/4 h-64 w-64 rounded-full bg-violet-200/30 blur-[90px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-indigo-200/30 blur-[90px] pointer-events-none" />
+
+        <div className="relative ">
+          {/* HEADING */}
+          <div className="mb-8 flex items-end justify-between border-b border-slate-100 pb-5">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-violet-200/60 bg-violet-50 px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-violet-600">
+                <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
+                Explore Collections
+              </div>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl">
+                Shop By{" "}
+                <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-amber-500 bg-clip-text text-transparent">
+                  Category
+                </span>
+              </h2>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => navigate("/categories")}
+              className="group inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-violet-300 hover:bg-violet-600 hover:text-white hover:shadow-lg hover:shadow-violet-500/20 active:scale-95"
+            >
+              View All
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => navigate("/categories")}
-            className=" font-semibold text-blue-600 transition hover:text-blue-800 "
-          >
-            View All →
-          </button>
-        </div>
-        {/* categroy grid 6 colume on desktop */}
-        <div className=" grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-6 max-h-80 ">
-          {/* laptop */}
-          <div
-            onClick={() => navigate("/Category/laptops")}
-            className=" group cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl "
-          >
-            <div className="h-60 overflow-hidden bg-gray-100">
-              <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeBApw9lO-7QnpmjzMVd8xOTC9817YKGdnOZbx-soxlQ&s=10"
-                alt="Laptops"
-                className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-110"
-              />
+
+          {/* CATEGORY GRID */}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {/* LAPTOPS */}
+            <div
+              onClick={() => navigate("/Category/laptops")}
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-3 shadow-[0_4px_20px_rgb(0,0,0,0.03)] backdrop-blur-md transition-all duration-500 ease-out hover:-translate-y-2 hover:border-violet-300 hover:shadow-[0_20px_40px_-15px_rgba(124,58,237,0.15)]"
+            >
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gradient-to-tr from-slate-100 via-slate-50 to-indigo-50/40 p-2">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeBApw9lO-7QnpmjzMVd8xOTC9817YKGdnOZbx-soxlQ&s=10"
+                  alt="Laptops"
+                  className="h-full w-full object-contain p-2 transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+              </div>
+              <div className="pt-3 pb-1 text-center">
+                <h3 className="text-sm font-bold text-slate-800 transition-colors duration-200 group-hover:text-violet-600">
+                  Laptops
+                </h3>
+                <p className="mt-0.5 text-[11px] font-medium text-slate-400">
+                  Laptops & PCs
+                </p>
+              </div>
             </div>
-            <div className="p-3 text-center">
-              <h3 className="text-base font-bold text-gray-900">Laptops</h3>
-              <p className="mt-1 text-xs text-gray-500">
-                Laptops & Desktop PCs
-              </p>
+
+            {/* SMARTPHONES */}
+            <div
+              onClick={() => navigate("/Category/smartphones")}
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-3 shadow-[0_4px_20px_rgb(0,0,0,0.03)] backdrop-blur-md transition-all duration-500 ease-out hover:-translate-y-2 hover:border-violet-300 hover:shadow-[0_20px_40px_-15px_rgba(124,58,237,0.15)]"
+            >
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gradient-to-tr from-slate-100 via-slate-50 to-indigo-50/40 p-2">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbq7uyxdQ3CZISpWehx7p28Y5_h2PQpa4Bat_uwYnw_w&s=10"
+                  alt="Smartphones"
+                  className="h-full w-full object-contain p-2 transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+              </div>
+              <div className="pt-3 pb-1 text-center">
+                <h3 className="text-sm font-bold text-slate-800 transition-colors duration-200 group-hover:text-violet-600">
+                  Smartphones
+                </h3>
+                <p className="mt-0.5 text-[11px] font-medium text-slate-400">
+                  Latest Phones
+                </p>
+              </div>
             </div>
-          </div>
-          {/* Smartphone */}
-          <div
-            onClick={() => navigate("/Category/smartphones")}
-            className=" group cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl "
-          >
-            <div className="h-60  overflow-hidden bg-gray-100">
-              <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbq7uyxdQ3CZISpWehx7p28Y5_h2PQpa4Bat_uwYnw_w&s=10"
-                alt="Smartphones"
-                className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-110"
-              />
+
+            {/* HEADPHONES */}
+            <div
+              onClick={() => navigate("/Category/headphones")}
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-3 shadow-[0_4px_20px_rgb(0,0,0,0.03)] backdrop-blur-md transition-all duration-500 ease-out hover:-translate-y-2 hover:border-violet-300 hover:shadow-[0_20px_40px_-15px_rgba(124,58,237,0.15)]"
+            >
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gradient-to-tr from-slate-100 via-slate-50 to-indigo-50/40 p-2">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPaNoWbovWr4KwXAqjcTO0qQ6ISgJG-prN1E1wRFwdrQ&s=10"
+                  alt="Headphones"
+                  className="h-full w-full object-contain p-2 transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+              </div>
+              <div className="pt-3 pb-1 text-center">
+                <h3 className="text-sm font-bold text-slate-800 transition-colors duration-200 group-hover:text-violet-600">
+                  Headphones
+                </h3>
+                <p className="mt-0.5 text-[11px] font-medium text-slate-400">
+                  Audio & Gear
+                </p>
+              </div>
             </div>
-            <div className="p-3 text-center">
-              <h3 className="text-base font-bold text-gray-900">Smartphones</h3>
-              <p className="mt-1 text-xs text-gray-500">Latest Smartphones</p>
+
+            {/* CAMERA */}
+            <div
+              onClick={() => navigate("/Category/cam")}
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-3 shadow-[0_4px_20px_rgb(0,0,0,0.03)] backdrop-blur-md transition-all duration-500 ease-out hover:-translate-y-2 hover:border-violet-300 hover:shadow-[0_20px_40px_-15px_rgba(124,58,237,0.15)]"
+            >
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gradient-to-tr from-slate-100 via-slate-50 to-indigo-50/40 p-2">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnFKKbgkkBD7Ku9P5MXoJP6__Mbng53dQfntt9QCUpCg&s=10"
+                  alt="Camera"
+                  className="h-full w-full object-contain p-2 transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+              </div>
+              <div className="pt-3 pb-1 text-center">
+                <h3 className="text-sm font-bold text-slate-800 transition-colors duration-200 group-hover:text-violet-600">
+                  Camera
+                </h3>
+                <p className="mt-0.5 text-[11px] font-medium text-slate-400">
+                  Digital Cameras
+                </p>
+              </div>
             </div>
-          </div>
-          {/* heandphone */}
-          <div
-            onClick={() => navigate("/Category/headphones")}
-            className=" group cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl "
-          >
-            <div className="h-60  overflow-hidden bg-gray-100">
-              <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPaNoWbovWr4KwXAqjcTO0qQ6ISgJG-prN1E1wRFwdrQ&s=10"
-                alt="Headphones"
-                className=" h-60  w-full object-cover transition duration-500 group-hover:scale-110 "
-              />
+
+            {/* MIXER GRINDER */}
+            <div
+              onClick={() => navigate("/Category/mix-grinder")}
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-3 shadow-[0_4px_20px_rgb(0,0,0,0.03)] backdrop-blur-md transition-all duration-500 ease-out hover:-translate-y-2 hover:border-violet-300 hover:shadow-[0_20px_40px_-15px_rgba(124,58,237,0.15)]"
+            >
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gradient-to-tr from-slate-100 via-slate-50 to-indigo-50/40 p-2">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjnZk7q6HTHLTv2Rn9yTghI1U4mio-o3GCGsXlhvwmAg&s=10"
+                  alt="Mixer Grinder"
+                  className="h-full w-full object-contain p-2 transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+              </div>
+              <div className="pt-3 pb-1 text-center">
+                <h3 className="text-sm font-bold text-slate-800 transition-colors duration-200 group-hover:text-violet-600">
+                  Mixer Grinder
+                </h3>
+                <p className="mt-0.5 text-[11px] font-medium text-slate-400">
+                  Kitchen Appliances
+                </p>
+              </div>
             </div>
-            <div className="p-3 text-center">
-              <h3 className="text-base font-bold text-gray-900">Headphones</h3>
-              <p className="mt-1 text-xs text-gray-500">Audio & Accessories</p>
-            </div>
-          </div>
-          {/* camera */}
-          <div
-            onClick={() => navigate("/Category/cam")}
-            className=" group cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl "
-          >
-            <div className="h-60  overflow-hidden bg-gray-100">
-              <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnFKKbgkkBD7Ku9P5MXoJP6__Mbng53dQfntt9QCUpCg&s=10"
-                alt="Camera"
-                className=" h-full w-full object-cover transition duration-500 group-hover:scale-110 "
-              />
-            </div>
-            <div className="p-3 text-center">
-              <h3 className="text-base font-bold text-gray-900">Camera</h3>
-              <p className="mt-1 text-xs text-gray-500">Digital Cameras</p>
-            </div>
-          </div>
-          {/* mixer grinder */}
-          <div
-            onClick={() => navigate("/Category/mix-grinder")}
-            className=" group cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl "
-          >
-            <div className="h-60  overflow-hidden bg-gray-100">
-              <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjnZk7q6HTHLTv2Rn9yTghI1U4mio-o3GCGsXlhvwmAg&s=10"
-                alt="Mixer Grinder"
-                className=" h-full w-full object-cover transition duration-500 group-hover:scale-110 "
-              />
-            </div>
-            <div className="p-3 text-center">
-              <h3 className="text-base font-bold text-gray-900">
-                Mixer Grinder
-              </h3>
-              <p className="mt-1 text-xs text-gray-500">Kitchen Appliances</p>
-            </div>
-          </div>
-          {/* Air buds */}
-          <div
-            onClick={() => navigate("/Category/air-buds")}
-            className=" group cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl "
-          >
-            <div className="h-60  overflow-hidden bg-gray-100">
-              <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0kFqUOI3Rvk9I88FF0meFMgrbYI2tHSSa8Ne9spV00w&s=10"
-                alt="Air Buds"
-                className=" h-full w-full object-cover transition duration-500 group-hover:scale-110 "
-              />
-            </div>
-            <div className="p-3 text-center">
-              <h3 className="text-base font-bold text-gray-900">Air Buds</h3>
-              <p className="mt-1 text-xs text-gray-500">Wireless Audio</p>
+
+            {/* AIR BUDS */}
+            <div
+              onClick={() => navigate("/Category/air-buds")}
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-3 shadow-[0_4px_20px_rgb(0,0,0,0.03)] backdrop-blur-md transition-all duration-500 ease-out hover:-translate-y-2 hover:border-violet-300 hover:shadow-[0_20px_40px_-15px_rgba(124,58,237,0.15)]"
+            >
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gradient-to-tr from-slate-100 via-slate-50 to-indigo-50/40 p-2">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0kFqUOI3Rvk9I88FF0meFMgrbYI2tHSSa8Ne9spV00w&s=10"
+                  alt="Air Buds"
+                  className="h-full w-full object-contain p-2 transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+              </div>
+              <div className="pt-3 pb-1 text-center">
+                <h3 className="text-sm font-bold text-slate-800 transition-colors duration-200 group-hover:text-violet-600">
+                  Air Buds
+                </h3>
+                <p className="mt-0.5 text-[11px] font-medium text-slate-400">
+                  Wireless Audio
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* PRODUCTS */}
-      <div id="products " className="p-6">
-        <div className=" flex justify-between">
-          <h2 className="text-2xl font-bold text-black mb-6">Products </h2>
-          <button onClick={() => navigate("/shop")}> View All → </button>
+      <section
+        id="products"
+        className="relative overflow-hidden bg-gradient-to-b from-slate-50/50 via-white to-slate-50/50 py-12 px-4 sm:px-6 lg:px-8"
+      >
+        {/* SOFT LIGHT GLOW ACCENTS */}
+        <div className="absolute top-0 left-1/3 h-72 w-72 rounded-full bg-violet-200/30 blur-[90px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/3 h-72 w-72 rounded-full bg-indigo-200/30 blur-[90px] pointer-events-none" />
+
+        <div className="relative mx-auto max-w-7xl">
+          {/* HEADER */}
+          <div className="mb-8 flex items-end justify-between border-b border-slate-100 pb-5">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-amber-50 px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-amber-700 shadow-sm backdrop-blur-md">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                Fresh Arrivals
+              </div>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl">
+                Explore Our{" "}
+                <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-amber-500 bg-clip-text text-transparent">
+                  Products
+                </span>
+              </h2>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => navigate("/shop")}
+              className="group inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-violet-300 hover:bg-violet-600 hover:text-white hover:shadow-lg hover:shadow-violet-500/20 active:scale-95"
+            >
+              View All
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </button>
+          </div>
+
+          {/* PRODUCTS GRID */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            {data?.products?.map((product) => (
+              <Card
+                key={product.documentId}
+                documentId={product.documentId}
+                name={product.name}
+                price={product.price}
+                imageUrl={product.images?.[0]?.url}
+              />
+            ))}
+          </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {data?.products?.map((product) => (
-            <Card
-              key={product.documentId}
-              documentId={product.documentId}
-              name={product.name}
-              price={product.price}
-              imageUrl={product.images?.[0]?.url}
-            />
-          ))}
-        </div>
-      </div>
+      </section>
 
       {/* Silder auto OfferSlider */}
       {/* OFFER SLIDER */}
 
-      <div className="w-full overflow-hidden bg-yellow-400 py-2 mt-5">
-        <div className="flex h-6 items-center justify-center overflow-hidden">
-          <div
-            key={current}
-            className="
-        whitespace-nowrap
-        text-center
-        text-sm
-        font-semibold
-        text-black
-        transition-all
-        duration-700
-        ease-in-out
-      "
-          >
-            {offers[current]}
-          </div>
-        </div>
-      </div>
+   <div className="relative my-6 w-full overflow-hidden border-y border-amber-200/60 bg-gradient-to-r from-amber-100 via-amber-300 to-amber-100 py-2.5 shadow-sm">
+  {/* AMBIENT GLOW */}
+  <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
+
+  <div className="relative mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
+    {/* ANIMATED PULSE BADGE */}
+    <span className="relative flex h-2 w-2">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-slate-900 opacity-75" />
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-slate-900" />
+    </span>
+
+    {/* ANNOUNCEMENT CONTENT */}
+    <div className="flex h-6 items-center justify-center overflow-hidden">
+      <p
+        key={current}
+        className="animate-fade-in whitespace-nowrap text-center text-xs font-extrabold uppercase tracking-widest text-slate-900 transition-all duration-700 ease-in-out sm:text-sm"
+      >
+        {offers[current]}
+      </p>
+    </div>
+  </div>
+</div>
 
       {/* card */}
-      <div className="mx-auto grid grid-cols-1 gap-6 px-6 py-10 md:grid-cols-3">
+      <div className="grid  grid-cols-1 gap-6 px-4 py-10 sm:px-6 md:grid-cols-3">
         {/* Card 1 */}
-        <div className="group relative overflow-hidden rounded-lg">
+        <div className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl">
           <img
             src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/sub-banner-1.jpg"
             alt="Wireless Headphone"
-            className="h-[300px] w-full object-cover transition duration-500 group-hover:scale-105"
+            className="h-[260px] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 sm:h-[300px]"
           />
 
-          <div className="absolute inset-0 flex flex-col justify-center px-8">
-            <h1 className="text-3xl font-bold uppercase text-gray-900">
-              Flat 30% Off
-            </h1>
+          {/* GRADIENT OVERLAY FOR READABILITY */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/50 to-transparent p-6 sm:p-8 flex flex-col justify-center">
+            <span className="inline-block w-fit rounded-full bg-violet-600/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-violet-600 border border-violet-200/50">
+              Limited Deal
+            </span>
 
-            <p className="mt-2 text-lg text-gray-700">
+            <h2 className="mt-2 text-2xl font-black uppercase text-slate-900 sm:text-3xl">
+              Flat 30% Off
+            </h2>
+
+            <p className="mt-1 text-sm font-semibold text-slate-700 sm:text-base">
               Best Wireless Headphone
             </p>
 
             <button
-              className="mt-5 w-fit  text-sm font-semibold underline hover:no-underline letter-sp
-                   text-black transition hover:text-gray-900"
+              type="button"
+              className="mt-5 flex w-fit items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all duration-300 hover:bg-violet-600 hover:shadow-violet-500/25 active:scale-95"
             >
-              SHOP NOW
+              Shop Now
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
             </button>
           </div>
         </div>
 
         {/* Card 2 */}
-        <div className="group relative overflow-hidden rounded-lg">
+        <div className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl">
           <img
             src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/sub-banner-2.jpg"
             alt="Android Smart"
-            className="h-[300px] w-full object-cover transition duration-500 group-hover:scale-105"
+            className="h-[260px] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 sm:h-[300px]"
           />
 
-          <div className="absolute inset-0 flex flex-col justify-center px-8">
-            <h1 className="text-3xl font-bold uppercase text-gray-900">
-              Flat 20% Off
-            </h1>
+          <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/50 to-transparent p-6 sm:p-8 flex flex-col justify-center">
+            <span className="inline-block w-fit rounded-full bg-indigo-600/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 border border-indigo-200/50">
+              Smart Tech
+            </span>
 
-            <p className="mt-2 text-lg text-gray-700">Android Smart</p>
+            <h2 className="mt-2 text-2xl font-black uppercase text-slate-900 sm:text-3xl">
+              Flat 20% Off
+            </h2>
+
+            <p className="mt-1 text-sm font-semibold text-slate-700 sm:text-base">
+              Android Smart
+            </p>
 
             <button
-              className="mt-5 w-fit  text-sm font-semibold underline hover:no-underline letter-sp
-                   text-black transition hover:text-gray-900"
+              type="button"
+              className="mt-5 flex w-fit items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all duration-300 hover:bg-violet-600 hover:shadow-violet-500/25 active:scale-95"
             >
-              SHOP NOW
+              Shop Now
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
             </button>
           </div>
         </div>
 
         {/* Card 3 */}
-        <div className="group relative overflow-hidden rounded-lg">
+        <div className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl">
           <img
             src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/sub-banner-3.jpg"
             alt="Apple iPhone 12"
-            className="h-[300px] w-full object-cover transition duration-500 group-hover:scale-105"
+            className="h-[260px] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 sm:h-[300px]"
           />
 
-          <div className="absolute inset-0 flex flex-col justify-center px-8">
-            <h1 className="text-3xl font-bold uppercase text-gray-900">
-              Flat 10% Off
-            </h1>
+          <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/50 to-transparent p-6 sm:p-8 flex flex-col justify-center">
+            <span className="inline-block w-fit rounded-full bg-amber-600/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-amber-700 border border-amber-200/50">
+              Special Offer
+            </span>
 
-            <p className="mt-2 text-lg text-gray-700">Apple iPhone 12 Blue</p>
+            <h2 className="mt-2 text-2xl font-black uppercase text-slate-900 sm:text-3xl">
+              Flat 10% Off
+            </h2>
+
+            <p className="mt-1 text-sm font-semibold text-slate-700 sm:text-base">
+              Apple iPhone 12 Blue
+            </p>
 
             <button
-              className="mt-5 w-fit  text-sm font-semibold underline hover:no-underline letter-sp
-                   text-black transition hover:text-gray-900"
+              type="button"
+              className="mt-5 flex w-fit items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all duration-300 hover:bg-violet-600 hover:shadow-violet-500/25 active:scale-95"
             >
-              SHOP NOW
+              Shop Now
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
             </button>
           </div>
         </div>
@@ -340,156 +445,91 @@ function Home() {
       <Testimonials />
 
       {/* Benner section */}
-      <div className="relative">
-        <img
-          src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/offer-banner-1.jpg"
-          alt="Up to 40% off big discount"
-          className="h-[350px] w-full object-cover"
-        />
+   <section className="relative w-full my-10 mx-auto max-w-full overflow-hidden rounded-3xl border border-slate-200/80 bg-slate-900 shadow-xl transition-all duration-500 hover:shadow-2xl">
+  {/* BANNER IMAGE */}
+  <img
+    src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/offer-banner-1.jpg"
+    alt="Up to 40% off big discount"
+    className="h-[320px] w-full object-cover transition-transform duration-700 ease-out hover:scale-105 sm:h-[400px]"
+  />
 
-        <div className="absolute inset-0 flex flex-col justify-center px-8">
-          <p className="text-sm font-semibold uppercase tracking-widest text-yellow-500">
-            Up to 40% off
-          </p>
+  {/* GRADIENT OVERLAY FOR READABILITY */}
+  <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent p-6 sm:p-12 flex flex-col justify-center">
+    <div className="max-w-xl">
+      {/* DISCOUNT BADGE */}
+      <span className="inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-amber-500/10 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-amber-700 backdrop-blur-md">
+        <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+        Up to 40% Off
+      </span>
 
-          <h2 className="mt-2 max-w-md text-3xl font-bold text-gray-900">
-            Big Discount
-          </h2>
+      {/* HEADING */}
+      <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-5xl">
+        Big <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-amber-500 bg-clip-text text-transparent">Discount</span>
+      </h2>
 
-          <p className="mt-3 max-w-md text-lg font-semibold text-gray-800">
-            Chicbuy Laptop Computer 15.6"
-          </p>
+      {/* PRODUCT TITLE */}
+      <p className="mt-3 text-base font-bold text-slate-800 sm:text-xl">
+        Chicbuy Laptop Computer 15.6"
+      </p>
 
-          <p className="mt-1 text-sm text-gray-600">12GB DDR4 • 512GB SSD</p>
-
-          <button className="mt-6 w-fit rounded-lg bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-yellow-400 hover:text-black">
-            Shop Now
-          </button>
-        </div>
+      {/* SPECS BADGES */}
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-600">
+        <span className="rounded-md bg-slate-100/80 px-2.5 py-1 backdrop-blur-sm border border-slate-200/60">
+          12GB DDR4
+        </span>
+        <span className="text-slate-300">•</span>
+        <span className="rounded-md bg-slate-100/80 px-2.5 py-1 backdrop-blur-sm border border-slate-200/60">
+          512GB SSD
+        </span>
       </div>
 
+      {/* CTA BUTTON */}
+      <button
+        type="button"
+        className="group mt-6 flex w-fit items-center gap-2 rounded-xl bg-slate-900 px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-violet-600 hover:shadow-violet-500/25 active:scale-95 sm:text-sm"
+      >
+        Shop Now
+        <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+      </button>
+    </div>
+  </div>
+</section>
+
       {/* Favourite Brands  section*/}
-      <section className="bg-white py-14">
-        <div className="mx-auto max-w-7xl px-6">
-          {/* Heading */}
-          <div className="mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">
-              Favourite Brands
+   <section className="relative overflow-hidden bg-gradient-to-b from-slate-50/50 via-white to-slate-50/50 py-16">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-10 flex flex-col items-start justify-between gap-4 border-b border-slate-100 pb-6 sm:flex-row sm:items-end">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-violet-200/60 bg-violet-50 px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-violet-600">
+              <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
+              Trusted Partners
+            </div>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl">
+              Favourite <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-amber-500 bg-clip-text text-transparent">Brands</span>
             </h2>
-
-            <p className="mt-3 text-gray-500">
-              Discover the brands our customers love the most
-            </p>
           </div>
-
-          {/* Brands */}
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {/* Brand 1 */}
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/01-2.png"
-                alt="Brand 1"
-                className="max-h-14 max-w-[130px] object-contain transition-all duration-300 hover:scale-105"
-              />
-            </div>
-
-            {/* Brand 2 */}
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/02-2.png"
-                alt="Brand 2"
-                className="max-h-14 max-w-[130px] object-contain transition-all duration-300 hover:scale-105"
-              />
-            </div>
-
-            {/* Brand 3 */}
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/03-2.png"
-                alt="Brand 3"
-                className="max-h-14 max-w-[130px] object-contain transition-all duration-300 hover:scale-105"
-              />
-            </div>
-
-            {/* Brand 4 */}
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/04-2.png"
-                alt="Brand 4"
-                className="max-h-14 max-w-[130px] object-contain transition-all duration-300 hover:scale-105"
-              />
-            </div>
-
-            {/* Brand 5 */}
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/05-1.png"
-                alt="Brand 5"
-                className="max-h-14 max-w-[130px] object-contain transition-all duration-300 hover:scale-105"
-              />
-            </div>
-
-            {/* Brand 6 */}
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/06.png"
-                alt="Brand 6"
-                className="max-h-14 max-w-[130px] object-contain transition-all duration-300 hover:scale-105"
-              />
-            </div>
-
-            {/* Brand 7 */}
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/07.png"
-                alt="Brand 7"
-                className="max-h-14 max-w-[130px] object-contain transition-all duration-300 hover:scale-105"
-              />
-            </div>
-
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/10.png"
-                alt="Brand 8"
-                className="max-h-14 max-w-[130px] object-contain transition-all duration-300 hover:scale-105"
-              />
-            </div>
-
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/08.png"
-                alt="Brand 9"
-                className="max-h-14 max-w-[130px] object-contain transition-all duration-300 hover:scale-105"
-              />
-            </div>
-
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                // src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/09.png"
-                alt="Brand 10"
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/10.png"
-              />
-            </div>
-
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/11.png"
-                alt="Brand 11"
-                // className="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/11.png"
-              />
-            </div>
-
-            <div className="flex h-28 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <img
-                // src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/09.png"
-                alt="Brand 12"
-                src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/12-removebg-preview.png"
-              />
-            </div>
-          </div>
+          <p className="text-xs font-medium text-slate-500 sm:text-sm">
+            Discover the brands our customers love the most
+          </p>
         </div>
-      </section>
 
+        {/* BRANDS GRID */}
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          {brands.map((brand) => (
+            <div
+              key={brand.id}
+              className="group relative flex h-24 items-center justify-center rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-md transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-violet-300 hover:shadow-[0_15px_30px_-10px_rgba(124,58,237,0.12)]"
+            >
+              <img
+                src={brand.src}
+                alt={brand.name}
+                className="max-h-12 max-w-[110px] object-contain transition-all duration-300 group-hover:scale-110"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
       {/* BLog section */}
       <Blog />
     </div>

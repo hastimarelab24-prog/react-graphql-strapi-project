@@ -37,3 +37,18 @@ export const blogData = [
     
   },
 ];
+
+export const  brands = [
+  { id: 1, name: "Brand 1", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/01-2.png" },
+  { id: 2, name: "Brand 2", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/02-2.png" },
+  { id: 3, name: "Brand 3", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/03-2.png" },
+  { id: 4, name: "Brand 4", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/04-2.png" },
+  { id: 5, name: "Brand 5", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/05-1.png" },
+  { id: 6, name: "Brand 6", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/06.png" },
+  { id: 7, name: "Brand 7", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/07.png" },
+  { id: 8, name: "Brand 8", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/10.png" },
+  { id: 9, name: "Brand 9", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/08.png" },
+  { id: 10, name: "Brand 10", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/10.png" },
+  { id: 11, name: "Brand 11", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/11.png" },
+  { id: 12, name: "Brand 12", src: "https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/12-removebg-preview.png" },
+];

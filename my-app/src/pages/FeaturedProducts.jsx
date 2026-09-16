@@ -66,7 +66,7 @@ function FeaturedProducts() {
   <div className="absolute top-0 left-1/3 h-80 w-80 rounded-full bg-violet-200/40 blur-[100px] pointer-events-none" />
   <div className="absolute bottom-0 right-1/3 h-80 w-80 rounded-full bg-amber-200/30 blur-[100px] pointer-events-none" />
 
-  <div className="relative mx-auto max-w-7xl">
+  <div className="relative">
     {/* HEADER */}
     <div className="mb-12 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
       <div>
