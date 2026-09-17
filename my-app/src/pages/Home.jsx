@@ -298,12 +298,26 @@ function Home() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {data?.products?.map((product) => (
               <Card
-                key={product.documentId}
-                documentId={product.documentId}
-                name={product.name}
-                price={product.price}
-                imageUrl={product.images?.[0]?.url}
-              />
+  documentId={product.documentId}
+  name={product.name}
+  price={product.price}
+  stock={product.stock}
+  imageUrl={product.images?.[0]?.url}
+
+  isDiscountActive={product.isDiscountActive}
+  discountType={product.discountType}
+  discountValue={product.discountValue}
+
+  categoryIsDiscountActive={
+    product.category?.isDiscountActive
+  }
+  categoryDiscountType={
+    product.category?.discountType
+  }
+  categoryDiscountValue={
+    product.category?.discountValue
+  }
+/>
             ))}
           </div>
         </div>
@@ -312,28 +326,28 @@ function Home() {
       {/* Silder auto OfferSlider */}
       {/* OFFER SLIDER */}
 
-   <div className="relative my-6 w-full overflow-hidden border-y border-amber-200/60 bg-gradient-to-r from-amber-100 via-amber-300 to-amber-100 py-2.5 shadow-sm">
-  {/* AMBIENT GLOW */}
-  <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
+      <div className="relative my-6 w-full overflow-hidden border-y border-amber-200/60 bg-gradient-to-r from-amber-100 via-amber-300 to-amber-100 py-2.5 shadow-sm">
+        {/* AMBIENT GLOW */}
+        <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
 
-  <div className="relative mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
-    {/* ANIMATED PULSE BADGE */}
-    <span className="relative flex h-2 w-2">
-      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-slate-900 opacity-75" />
-      <span className="relative inline-flex h-2 w-2 rounded-full bg-slate-900" />
-    </span>
+        <div className="relative mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
+          {/* ANIMATED PULSE BADGE */}
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-slate-900 opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-slate-900" />
+          </span>
 
-    {/* ANNOUNCEMENT CONTENT */}
-    <div className="flex h-6 items-center justify-center overflow-hidden">
-      <p
-        key={current}
-        className="animate-fade-in whitespace-nowrap text-center text-xs font-extrabold uppercase tracking-widest text-slate-900 transition-all duration-700 ease-in-out sm:text-sm"
-      >
-        {offers[current]}
-      </p>
-    </div>
-  </div>
-</div>
+          {/* ANNOUNCEMENT CONTENT */}
+          <div className="flex h-6 items-center justify-center overflow-hidden">
+            <p
+              key={current}
+              className="animate-fade-in whitespace-nowrap text-center text-xs font-extrabold uppercase tracking-widest text-slate-900 transition-all duration-700 ease-in-out sm:text-sm"
+            >
+              {offers[current]}
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* card */}
       <div className="grid  grid-cols-1 gap-6 px-4 py-10 sm:px-6 md:grid-cols-3">
@@ -445,91 +459,99 @@ function Home() {
       <Testimonials />
 
       {/* Benner section */}
-   <section className="relative w-full my-10 mx-auto max-w-full overflow-hidden rounded-3xl border border-slate-200/80 bg-slate-900 shadow-xl transition-all duration-500 hover:shadow-2xl">
-  {/* BANNER IMAGE */}
-  <img
-    src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/offer-banner-1.jpg"
-    alt="Up to 40% off big discount"
-    className="h-[320px] w-full object-cover transition-transform duration-700 ease-out hover:scale-105 sm:h-[400px]"
-  />
+      <section className="relative w-full my-10 mx-auto max-w-full overflow-hidden rounded-3xl border border-slate-200/80 bg-slate-900 shadow-xl transition-all duration-500 hover:shadow-2xl">
+        {/* BANNER IMAGE */}
+        <img
+          src="https://demos.codezeel.com/wordpress/WCM11/WCM110273/default/wp-content/uploads/2025/09/offer-banner-1.jpg"
+          alt="Up to 40% off big discount"
+          className="h-[320px] w-full object-cover transition-transform duration-700 ease-out hover:scale-105 sm:h-[400px]"
+        />
 
-  {/* GRADIENT OVERLAY FOR READABILITY */}
-  <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent p-6 sm:p-12 flex flex-col justify-center">
-    <div className="max-w-xl">
-      {/* DISCOUNT BADGE */}
-      <span className="inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-amber-500/10 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-amber-700 backdrop-blur-md">
-        <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-        Up to 40% Off
-      </span>
+        {/* GRADIENT OVERLAY FOR READABILITY */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent p-6 sm:p-12 flex flex-col justify-center">
+          <div className="max-w-xl">
+            {/* DISCOUNT BADGE */}
+            <span className="inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-amber-500/10 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-amber-700 backdrop-blur-md">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+              Up to 40% Off
+            </span>
 
-      {/* HEADING */}
-      <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-5xl">
-        Big <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-amber-500 bg-clip-text text-transparent">Discount</span>
-      </h2>
+            {/* HEADING */}
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-5xl">
+              Big{" "}
+              <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-amber-500 bg-clip-text text-transparent">
+                Discount
+              </span>
+            </h2>
 
-      {/* PRODUCT TITLE */}
-      <p className="mt-3 text-base font-bold text-slate-800 sm:text-xl">
-        Chicbuy Laptop Computer 15.6"
-      </p>
+            {/* PRODUCT TITLE */}
+            <p className="mt-3 text-base font-bold text-slate-800 sm:text-xl">
+              Chicbuy Laptop Computer 15.6"
+            </p>
 
-      {/* SPECS BADGES */}
-      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-600">
-        <span className="rounded-md bg-slate-100/80 px-2.5 py-1 backdrop-blur-sm border border-slate-200/60">
-          12GB DDR4
-        </span>
-        <span className="text-slate-300">•</span>
-        <span className="rounded-md bg-slate-100/80 px-2.5 py-1 backdrop-blur-sm border border-slate-200/60">
-          512GB SSD
-        </span>
-      </div>
+            {/* SPECS BADGES */}
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-600">
+              <span className="rounded-md bg-slate-100/80 px-2.5 py-1 backdrop-blur-sm border border-slate-200/60">
+                12GB DDR4
+              </span>
+              <span className="text-slate-300">•</span>
+              <span className="rounded-md bg-slate-100/80 px-2.5 py-1 backdrop-blur-sm border border-slate-200/60">
+                512GB SSD
+              </span>
+            </div>
 
-      {/* CTA BUTTON */}
-      <button
-        type="button"
-        className="group mt-6 flex w-fit items-center gap-2 rounded-xl bg-slate-900 px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-violet-600 hover:shadow-violet-500/25 active:scale-95 sm:text-sm"
-      >
-        Shop Now
-        <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-      </button>
-    </div>
-  </div>
-</section>
+            {/* CTA BUTTON */}
+            <button
+              type="button"
+              className="group mt-6 flex w-fit items-center gap-2 rounded-xl bg-slate-900 px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-violet-600 hover:shadow-violet-500/25 active:scale-95 sm:text-sm"
+            >
+              Shop Now
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
 
       {/* Favourite Brands  section*/}
-   <section className="relative overflow-hidden bg-gradient-to-b from-slate-50/50 via-white to-slate-50/50 py-16">
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-10 flex flex-col items-start justify-between gap-4 border-b border-slate-100 pb-6 sm:flex-row sm:items-end">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-violet-200/60 bg-violet-50 px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-violet-600">
-              <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
-              Trusted Partners
+      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50/50 via-white to-slate-50/50 py-16">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-10 flex flex-col items-start justify-between gap-4 border-b border-slate-100 pb-6 sm:flex-row sm:items-end">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-violet-200/60 bg-violet-50 px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-violet-600">
+                <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
+                Trusted Partners
+              </div>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl">
+                Favourite{" "}
+                <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-amber-500 bg-clip-text text-transparent">
+                  Brands
+                </span>
+              </h2>
             </div>
-            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl">
-              Favourite <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-amber-500 bg-clip-text text-transparent">Brands</span>
-            </h2>
+            <p className="text-xs font-medium text-slate-500 sm:text-sm">
+              Discover the brands our customers love the most
+            </p>
           </div>
-          <p className="text-xs font-medium text-slate-500 sm:text-sm">
-            Discover the brands our customers love the most
-          </p>
-        </div>
 
-        {/* BRANDS GRID */}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {brands.map((brand) => (
-            <div
-              key={brand.id}
-              className="group relative flex h-24 items-center justify-center rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-md transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-violet-300 hover:shadow-[0_15px_30px_-10px_rgba(124,58,237,0.12)]"
-            >
-              <img
-                src={brand.src}
-                alt={brand.name}
-                className="max-h-12 max-w-[110px] object-contain transition-all duration-300 group-hover:scale-110"
-              />
-            </div>
-          ))}
+          {/* BRANDS GRID */}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            {brands.map((brand) => (
+              <div
+                key={brand.id}
+                className="group relative flex h-24 items-center justify-center rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-md transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-violet-300 hover:shadow-[0_15px_30px_-10px_rgba(124,58,237,0.12)]"
+              >
+                <img
+                  src={brand.src}
+                  alt={brand.name}
+                  className="max-h-12 max-w-[110px] object-contain transition-all duration-300 group-hover:scale-110"
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
       {/* BLog section */}
       <Blog />
     </div>

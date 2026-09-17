@@ -14,6 +14,7 @@ export const GET_PRODUCTS_BY_CATEGORY = gql`
       documentId
       name
       price
+      stock
       description
       images {
         url
@@ -30,6 +31,7 @@ export const SEARCH_PRODUCTS = gql`
       documentId
       name
       price
+      stock
       description
       images {
         url
@@ -44,12 +46,27 @@ export const GET_ALL_PRODUCTS = gql`
       documentId
       name
       price
-      category{
-      name
+      stock
+      isDiscountActive
+      discountType
+      discountValue
+      category {
+        name
       }
       images {
         url
       }
+    }
+  }
+`;
+
+export const GET_GLOBAL_OFFER = gql`
+  query GetGlobalOffer {
+    globalOffer {
+      name
+      isActive
+      discountType
+      discountValue
     }
   }
 `;

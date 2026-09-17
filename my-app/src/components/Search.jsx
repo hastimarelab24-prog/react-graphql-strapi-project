@@ -141,13 +141,27 @@ const{search,setSearch,products,loading,error,clearSearch,
                 product.images?.[0]?.url || "";
 
               return (
-                <Card
-                  key={product.documentId}
-                  documentId={product.documentId}
-                  name={product.name}
-                  price={product.price}
-                  imageUrl={imageUrl}
-                />
+             <Card
+  documentId={product.documentId}
+  name={product.name}
+  price={product.price}
+  stock={product.stock}
+  imageUrl={product.images?.[0]?.url}
+
+  isDiscountActive={product.isDiscountActive}
+  discountType={product.discountType}
+  discountValue={product.discountValue}
+
+  categoryIsDiscountActive={
+    product.category?.isDiscountActive
+  }
+  categoryDiscountType={
+    product.category?.discountType
+  }
+  categoryDiscountValue={
+    product.category?.discountValue
+  }
+/>
               );
             })}
           </div>

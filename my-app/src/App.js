@@ -9,6 +9,8 @@ import { BrowserRouter, useLocation, useRoutes } from "react-router-dom";
 import routes from "./routes"; // Import your routes configuration
 import Category from "./components/Category";
 import Footer from "./components/Footer";
+import { OfferProvider } from "./context/OfferContext";
+
 const client = new ApolloClient({
   link: new HttpLink({
     uri: "http://localhost:1337/graphql",
@@ -40,7 +42,10 @@ function App() {
   return (
     <BrowserRouter>
       <ApolloProvider client={client}>
+        <OfferProvider>
+
         <Routes />
+        </OfferProvider>
       </ApolloProvider>
     </BrowserRouter>
   );

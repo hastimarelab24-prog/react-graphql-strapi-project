@@ -1,127 +1,49 @@
-// Add to Cart
-const addToCart = (e) => {
-  e.stopPropagation();
+const applyDiscount = (price, discount) => {
+  let currentPrice = Number(price || 0);
 
-  // Get old cart from localStorage
-  const oldCart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  // Check if product already exists
-  const productExist = oldCart.find(
-    (item) => item.documentId === documentId
-  );
-
-  let updatedCart;
-
-  if (productExist) {
-    // Increase quantity if product already exists
-    updatedCart = oldCart.map((item) =>
-      item.documentId === documentId
-        ? {
-            ...item,
-            qty: (Number(item.qty) || 1) + 1,
-          }
-        : item
-    );
-
-    setSuccessMessage("Product quantity increased in cart");
-  } else {
-    // Add new product
-    const newProduct = {
-      documentId: documentId,
-      name: name,
-      price: price,
-      image: fullImageUrl,
-      qty: 1,
-    };
-
-    updatedCart = [...oldCart, newProduct];
-
-    setSuccessMessage("Product added to cart successfully");
+  // Discount active નથી તો original price return
+  if (!discount?.isActive) {
+    return currentPrice;
   }
 
-  // Save cart
-  localStorage.setItem("cart", JSON.stringify(updatedCart));
+  const value = Number(discount.discountValue || 0);
 
-  // Notify Navbar and Cart
-  window.dispatchEvent(new Event("cartChange"));
+  if (!Number.isFinite(value) || value < 0) {
+    return currentPrice;
+  }
 
-  // Show modal
-  setSuccessType("success");
-  setSuccessModal(true);
+  // Percentage discount
+  if (discount.discountType === "percentage") {
+    const percentage = Math.min(value, 100);
+
+    currentPrice =
+      currentPrice - (currentPrice * percentage) / 100;
+  }
+
+  // Fixed discount
+  if (discount.discountType === "fixed") {
+    currentPrice = currentPrice - value;
+  }
+
+  return Math.max(0, currentPrice);
 };
 
-const handleCheckout = () => {
-  const jwt = localStorage.getItem("jwt");
-  const user = localStorage.getItem("user");
+export const getDiscountedPrice = (
+  price,
+  globalOffer,
+  categoryDiscount,
+  productDiscount
+) => {
+  let finalPrice = Number(price || 0);
 
-  // User login નથી
-  if (!jwt || !user) {
-    navigate("/login", {
-      state: {
-        from: "/checkout",
-      },
-    });
+  // Global Offer Discount
+  finalPrice = applyDiscount(finalPrice, globalOffer);
 
-    return;
-  }
+  // Category Discount
+  finalPrice = applyDiscount(finalPrice, categoryDiscount);
 
-  // User login છે
-  navigate("/checkout");
-};  
+  // Product Discount
+  finalPrice = applyDiscount(finalPrice, productDiscount);
 
-
-
-
-if (data?.login) {
-  // Save JWT
-  localStorage.setItem("jwt", data.login.jwt);
-
-  // Save user details
-  localStorage.setItem(
-    "user",
-    JSON.stringify(data.login.user)
-  );
-
-  // Notify Navbar
-  window.dispatchEvent(new Event("authChange"));
-
-  // Redirect to checkout if user came from checkout
-  navigate(location.state?.from || "/", {
-    replace: true,
-  });
-}
-
-
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
-function Checkout() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    const user = localStorage.getItem("user");
-
-    if (!jwt || !user) {
-      navigate("/login", {
-        state: {
-          from: "/checkout",
-        },
-        replace: true,
-      });
-    }
-  }, [navigate]);
-
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  const user = JSON.parse(localStorage.getItem("user")) || null;
-
-  return (
-    <div>
-      {/* Your existing CheckoutFrom component */}
-      {/* <CheckoutFrom cart={cart} user={user} /> */}
-    </div>
-  );
-}
-
-export default Checkout;
+  return Number(Math.max(0, finalPrice).toFixed(2));
+};

@@ -12,8 +12,8 @@ function Shop() {
   // search
   const allProducts = data?.products || [];
 
-// call search hook first
-    const {
+  // call search hook first
+  const {
     search,
     setSearch,
     clearSearch,
@@ -22,8 +22,7 @@ function Shop() {
     error: searchError,
   } = useProductSearch();
 
-
-    // search hoy to search products, nahi to all products
+  // search hoy to search products, nahi to all products
   const activeProducts = search.trim() !== "" ? searchProducts : allProducts;
 
   // PRODUCTS
@@ -40,8 +39,6 @@ function Shop() {
     categories,
     filteredProducts,
   } = useProductFilters(activeProducts);
-
-
 
   // // PRICE LOW TO HIGH
   // if (sortBy === "price-low") {
@@ -286,20 +283,17 @@ function Shop() {
                   </p>
                 )}
 
-
-                {searchLoading&& search.trim()!==""&&(
+                {searchLoading && search.trim() !== "" && (
                   <p className="mt-2 text-sm text-gray-500">
                     Searching products....
                   </p>
                 )}
 
-                {
-                  searchError && (
-                    <p className="mt-2 text-sm text-red-100">
-                      {searchError.message}
-                    </p>
-                  )
-                }
+                {searchError && (
+                  <p className="mt-2 text-sm text-red-100">
+                    {searchError.message}
+                  </p>
+                )}
               </div>
 
               <p className="text-sm text-gray-500">
@@ -398,11 +392,19 @@ function Shop() {
               >
                 {filteredProducts.map((product) => (
                   <Card
-                    key={product.documentId || product.id}
-                    documentId={product.documentId || product.id}
+                    documentId={product.documentId}
                     name={product.name}
                     price={product.price}
+                    stock={product.stock}
                     imageUrl={product.images?.[0]?.url}
+                    isDiscountActive={product.isDiscountActive}
+                    discountType={product.discountType}
+                    discountValue={product.discountValue}
+                    categoryIsDiscountActive={
+                      product.category?.isDiscountActive
+                    }
+                    categoryDiscountType={product.category?.discountType}
+                    categoryDiscountValue={product.category?.discountValue}
                   />
                 ))}
               </div>
@@ -420,10 +422,10 @@ function Shop() {
 
                   <button
                     type="button"
-                    onClick={() => {setSelectedCategory("All Products");
-                      clearSearch()
-                     } }
-                   
+                    onClick={() => {
+                      setSelectedCategory("All Products");
+                      clearSearch();
+                    }}
                     className="
                       mt-5
                       rounded-lg

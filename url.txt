@@ -1,0 +1,24 @@
+https://electon7-store.myshopify.com/collections/featured-products/products/air-buds
+
+
+discount price  flow:-
+step-3
+Strapi Admin
+
+Global Offer માં percentage અથવા fixed પસંદ કરો.
+
+GraphQL
+
+React ને global offer data મળે.
+
+OfferContext
+
+બધા cards માટે offer provide થાય.
+
+Card.jsx
+
+Original price, discounted price અને dynamic badge બતાવે.
+
+Checkout
+
+Backend trusted price calculate કરે અને successful payment પછી stock ઘટાડે.

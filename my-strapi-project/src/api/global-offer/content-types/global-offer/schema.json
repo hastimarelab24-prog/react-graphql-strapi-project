@@ -1,0 +1,39 @@
+{
+  "kind": "singleType",
+  "collectionName": "global_offers",
+  "info": {
+    "singularName": "global-offer",
+    "pluralName": "global-offers",
+    "displayName": "Global Offer",
+    "description": "Global discount for all products"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": false
+    },
+    "discountType": {
+      "type": "enumeration",
+      "enum": [
+        "percentage",
+        "fixed"
+      ],
+      "required": true,
+      "default": "percentage"
+    },
+    "discountValue": {
+      "type": "decimal",
+      "required": true,
+      "default": 0,
+      "min": 0
+    }
+  }
+}

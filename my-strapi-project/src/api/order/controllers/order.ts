@@ -1,18 +1,13 @@
 import { factories } from "@strapi/strapi";
 import Stripe from "stripe";
 
-const stripe = new Stripe(
-  process.env.STRIPE_SECRET_KEY as string
-);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+const PRODUCT_UID = "api::product.product";
 
 export default factories.createCoreController(
   "api::order.order",
   ({ strapi }) => ({
-
-    // ============================================
     // CREATE STRIPE PAYMENT INTENT
-    // ============================================
-
     async createPaymentIntent(ctx) {
       try {
         const { amount } = ctx.request.body;
@@ -21,66 +16,43 @@ export default factories.createCoreController(
           return ctx.badRequest("Invalid amount");
         }
 
-        const paymentIntent =
-          await stripe.paymentIntents.create({
-            amount: Math.round(
-              Number(amount) * 100
-            ),
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: Math.round(Number(amount) * 100),
 
-            currency: "inr",
+          currency: "inr",
 
-            automatic_payment_methods: {
-              enabled: true,
-            },
-          });
+          automatic_payment_methods: {
+            enabled: true,
+          },
+        });
 
         return {
           success: true,
 
-          clientSecret:
-            paymentIntent.client_secret,
+          clientSecret: paymentIntent.client_secret,
 
-          paymentIntentId:
-            paymentIntent.id,
+          paymentIntentId: paymentIntent.id,
         };
-
       } catch (error: any) {
-
-        console.error(
-          "Stripe Payment Intent Error:",
-          error
-        );
+        console.error("Stripe Payment Intent Error:", error);
 
         return ctx.internalServerError(
-          error.message ||
-            "Payment intent creation failed"
+          error.message || "Payment intent creation failed",
         );
       }
     },
 
-
-    // ============================================
     // CREATE ORDER AFTER SUCCESSFUL PAYMENT
-    // ============================================
 
     async createOrder(ctx) {
-
       try {
-
-        const body = ctx.request.body;
-
-        const data = body?.data;
+        const data = ctx.request.body?.data;
 
         if (!data) {
-          return ctx.badRequest(
-            "Order data is required"
-          );
+          return ctx.badRequest("Order data is required");
         }
 
-
-        // ========================================
         // GET DATA
-        // ========================================
 
         const {
           orderId,
@@ -95,197 +67,171 @@ export default factories.createCoreController(
           paymentId,
         } = data;
 
-
-        // ========================================
         // VALIDATION
-        // ========================================
-
         if (!orderId) {
-          return ctx.badRequest(
-            "Order ID is required"
-          );
+          return ctx.badRequest("Order ID is required");
         }
 
-        if (!shippingAddress) {
-          return ctx.badRequest(
-            "Shipping address is required"
-          );
+        if (!shippingAddress?.trim()) {
+          return ctx.badRequest("Shipping address is required");
         }
 
-        if (!city) {
-          return ctx.badRequest(
-            "City is required"
-          );
+        if (!city?.trim()) {
+          return ctx.badRequest("City is required");
         }
 
         if (!amount || Number(amount) <= 0) {
-          return ctx.badRequest(
-            "Invalid order amount"
-          );
+          return ctx.badRequest("Invalid order amount");
         }
 
-        if (!items || !Array.isArray(items)) {
-          return ctx.badRequest(
-            "Order items are required"
-          );
+        if (!Array.isArray(items) || items.length === 0) {
+          return ctx.badRequest("Order items are required");
         }
 
         if (!user) {
-          return ctx.badRequest(
-            "User is required"
-          );
+          return ctx.badRequest("User is required");
         }
 
         if (!email) {
-          return ctx.badRequest(
-            "Email is required"
-          );
+          return ctx.badRequest("Email is required");
         }
 
         if (!paymentId) {
-          return ctx.badRequest(
-            "Payment ID is required"
-          );
+          return ctx.badRequest("Payment ID is required");
         }
-
-
-        // ========================================
         // CHECK STRIPE PAYMENT
-        // ========================================
 
-        const paymentIntent =
-          await stripe.paymentIntents.retrieve(
-            paymentId
-          );
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentId);
 
+        // console.log(
+        //   "Stripe Payment Status:",
+        //   paymentIntent.status
+        // );
 
-        console.log(
-          "Stripe Payment Status:",
-          paymentIntent.status
-        );
-
-
-        if (
-          paymentIntent.status !==
-          "succeeded"
-        ) {
-
-          return ctx.badRequest(
-            "Payment is not successful"
-          );
+        if (paymentIntent.status !== "succeeded") {
+          return ctx.badRequest("Payment is not successful");
         }
 
+        // check stock for all products
 
-        // ========================================
+        // CHECK STOCK FOR ALL PRODUCTS
+
+        const stockUpdates: any[] = [];
+
+        for (const item of items) {
+          const documentId = item.documentId;
+          const quantity = Number(item.qty) || 1;
+
+          if (!documentId) {
+            return ctx.badRequest("Product documentId is missing");
+          }
+
+          if (quantity <= 0) {
+            return ctx.badRequest("Invalid product quantity");
+          }
+
+          // FIND PRODUCT
+
+          const product = await strapi.db.query(PRODUCT_UID).findOne({
+            where: {
+              documentId: String(documentId),
+            },
+          });
+
+          if (!product) {
+            return ctx.badRequest(`Product not found: ${documentId}`);
+          }
+
+          // CHECK STOCK
+
+          const currentStock = Number(product.stock) || 0;
+
+          if (currentStock < quantity) {
+            return ctx.badRequest(`${product.name} has insufficient stock`);
+          }
+
+          // PREPARE STOCK UPDATE
+
+          stockUpdates.push({
+            productId: product.id,
+            productName: product.name,
+            currentStock,
+            quantity,
+            newStock: currentStock - quantity,
+          });
+        }
         // CREATE ORDER DATA
-        // ========================================
-
         const orderData: any = {
+          orderId: String(orderId),
 
-          orderId:
-            String(orderId),
+          shippingAddress: String(shippingAddress),
 
-          shippingAddress:
-            String(shippingAddress),
+          city: String(city),
 
-          city:
-            String(city),
+          amount: Math.round(Number(amount)),
 
-          amount:
-            Math.round(
-              Number(amount)
-            ),
+          items: items,
 
-          items:
-            items,
+          user: String(user),
 
-          user:
-            String(user),
+          email: String(email),
 
-          email:
-            String(email),
+          paymentId: String(paymentId),
 
-          paymentId:
-            String(paymentId),
-
-          paymentStatus:
-            "paid",
+          paymentStatus: "paid",
         };
-
 
         // State is optional
 
-        if (
-          state !== undefined &&
-          state !== null &&
-          state !== ""
-        ) {
-
-          orderData.state =
-            String(state);
+        if (state !== undefined && state !== null && state !== "") {
+          orderData.state = String(state);
         }
-
 
         // Pin is optional
 
-        if (
-          pin !== undefined &&
-          pin !== null &&
-          pin !== ""
-        ) {
-
-          orderData.pin =
-            Number(pin);
+        if (pin !== undefined && pin !== null && pin !== "") {
+          orderData.pin = Number(pin);
         }
 
-
-        // ========================================
         // SAVE ORDER IN STRAPI
-        // ========================================
 
-        const order =
-          await strapi.entityService.create(
-            "api::order.order",
-            {
-              data: orderData,
-            }
+        const order = await strapi.entityService.create("api::order.order", {
+          data: orderData,
+        });
+
+        console.log("Order Created:", order);
+
+        // decrease product stock
+        for (const stock of stockUpdates) {
+          await strapi.db.query(PRODUCT_UID).update({
+            where: {
+              id: stock.productId,
+            },
+            data: {
+              stock: stock.newStock,
+            },
+          });
+          console.log(
+            `Stock updates:${stock.productName} |` +
+              `${stock.currentStock}->${stock.newStock}`,
           );
-
-
-        console.log(
-          "Order Created:",
-          order
-        );
-
-
-        // ========================================
+        }
         // SUCCESS
-        // ========================================
 
         return {
-
           success: true,
 
-          message:
-            "Payment successful and order created",
+          message: "Payment successful and order created",
 
           order,
         };
-
-
       } catch (error: any) {
-
-        console.error(
-          "Create Order Error:",
-          error
-        );
+        console.error("Create Order Error:", error);
 
         return ctx.internalServerError(
-          error.message ||
-            "Order creation failed"
+          error.message || "Order creation failed",
         );
       }
     },
-
-  })
+  }),
 );

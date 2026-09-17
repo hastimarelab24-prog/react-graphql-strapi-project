@@ -40,6 +40,26 @@
       "target": "api::category.category",
       "required": false,
       "inversedBy": "products"
+    },
+    "stock": {
+      "type": "integer",
+      "default": 0
+    },
+    "isDiscountActive": {
+      "type": "boolean",
+      "default": false
+    },
+    "discountType": {
+      "type": "enumeration",
+      "default": "percentage",
+      "enum": [
+        "percentage",
+        "fixed"
+      ]
+    },
+    "discountValue": {
+      "type": "integer",
+      "default": 0
     }
   }
 }

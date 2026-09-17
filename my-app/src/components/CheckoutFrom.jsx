@@ -22,7 +22,7 @@ const CheckoutForm = () => {
   const navigate=useNavigate();
 
   useEffect(()=>{
-    const jwt=localStorage.getItem("jwt");
+    const jwt=localStorage.getItem("token");
     const user=localStorage.getItem("user");
 
     if(!jwt || !user){
@@ -539,7 +539,86 @@ const user =JSON.parse(localStorage.getItem("user")) || null;
 const Checkout = () => {
 
   // GET CART
-  const jwt = localStorage.getItem("jwt");
+  const token
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  = localStorage.getItem("token");
 
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -548,7 +627,7 @@ const Checkout = () => {
 
   // LOGIN CHECK
 
-  if (!jwt || !user) {
+  if (!token || !user) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">

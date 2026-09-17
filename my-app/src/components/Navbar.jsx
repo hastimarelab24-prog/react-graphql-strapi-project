@@ -93,13 +93,27 @@ const Navbar = () => {
             <div className="invisible fixed left-1/2 top-[80px] z-50 mt-4 w-[1250px] max-w-[95vw] -translate-x-1/2 translate-y-2 rounded-xl border border-gray-200 bg-white p-5 opacity-0 shadow-xl transition-all duration-300 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
               <div className="grid grid-cols-4 gap-8">
                 {data?.products?.slice(0, 4).map((product) => (
-                  <Card
-                    key={product.documentId}
-                    documentId={product.documentId}
-                    name={product.name}
-                    price={product.price}
-                    imageUrl={product.images?.[0]?.url}
-                  />
+             <Card
+  documentId={product.documentId}
+  name={product.name}
+  price={product.price}
+  stock={product.stock}
+  imageUrl={product.images?.[0]?.url}
+
+  isDiscountActive={product.isDiscountActive}
+  discountType={product.discountType}
+  discountValue={product.discountValue}
+
+  categoryIsDiscountActive={
+    product.category?.isDiscountActive
+  }
+  categoryDiscountType={
+    product.category?.discountType
+  }
+  categoryDiscountValue={
+    product.category?.discountValue
+  }
+/>
                 ))}
               </div>
             </div>
