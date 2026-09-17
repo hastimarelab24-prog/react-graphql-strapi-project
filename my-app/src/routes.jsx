@@ -20,8 +20,9 @@ import ForgotPassword from "./pages/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Wishlist from "./pages/wishlist";
 import Checkout from "./components/CheckoutFrom";
+import AdminDashboard from "./admin/AdminDashboard";
 const routes = [
-  <Navbar/>,
+  <Navbar />,
   {
     path: "/",
     element: <Home />,
@@ -31,8 +32,8 @@ const routes = [
     element: <Login />,
   },
   {
-    path:"/reset-password",
-    element:<ResetPassword/>
+    path: "/reset-password",
+    element: <ResetPassword />,
   },
   {
     path: "/signup",
@@ -72,31 +73,38 @@ const routes = [
     element: <FeaturedProducts />,
   },
   {
-    path:"/element",
-    element:<According/>
-  },
-   {
-    path:"/iconbox",
-    element:<Iconbox/>
-  },{
-    path:"/portfolio",
-    element:<Portfolio/>
-  },{
-    path:"/gallery",
-    element:<Gallery/>
-  },{
-    path:"/contact",
-    element:<Contact/>
+    path: "/element",
+    element: <According />,
   },
   {
-    path:"/wishlist",
-    element:<Wishlist/>
+    path: "/iconbox",
+    element: <Iconbox />,
   },
   {
-path:"/checkout",
-element:<Checkout/>
+    path: "/portfolio",
+    element: <Portfolio />,
   },
-  <Footer/>
+  {
+    path: "/gallery",
+    element: <Gallery />,
+  },
+  {
+    path: "/contact",
+    element: <Contact />,
+  },
+  {
+    path: "/wishlist",
+    element: <Wishlist />,
+  },
+  {
+    path: "/checkout",
+    element: <Checkout />,
+  },
+  {
+    path:"/admin-dashboard",
+    element:<AdminDashboard/>
+  },
+  <Footer />,
 ];
 
 export default routes;

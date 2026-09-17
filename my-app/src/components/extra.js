@@ -1,49 +1,57 @@
-const applyDiscount = (price, discount) => {
-  let currentPrice = Number(price || 0);
+import React from "react";
+import { useQuery } from "@apollo/client/react";
+import { GET_ALL_ORDERS } from "../gqloperation/adminQueries";
 
-  // Discount active નથી તો original price return
-  if (!discount?.isActive) {
-    return currentPrice;
+const AdminDashboard = () => {
+  const { data, loading, error } = useQuery(GET_ALL_ORDERS);
+
+  if (loading) return <p>Loading...</p>;
+
+  if (error) {
+    return <p>Error: {error.message}</p>;
   }
 
-  const value = Number(discount.discountValue || 0);
+  const orders = data?.orders || [];
 
-  if (!Number.isFinite(value) || value < 0) {
-    return currentPrice;
-  }
+  const totalOrders = orders.length;
 
-  // Percentage discount
-  if (discount.discountType === "percentage") {
-    const percentage = Math.min(value, 100);
+  const totalSales = orders
+    .filter((order) => order.paymentStatus === "paid")
+    .reduce((total, order) => total + Number(order.amount || 0), 0);
 
-    currentPrice =
-      currentPrice - (currentPrice * percentage) / 100;
-  }
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <h1 className="mb-6 text-3xl font-bold">
+        Admin Dashboard
+      </h1>
 
-  // Fixed discount
-  if (discount.discountType === "fixed") {
-    currentPrice = currentPrice - value;
-  }
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {/* Total Orders */}
+        <div className="rounded-lg bg-white p-6 shadow">
+          <h2 className="text-gray-500">Total Orders</h2>
+          <p className="text-3xl font-bold">{totalOrders}</p>
+        </div>
 
-  return Math.max(0, currentPrice);
+        {/* Total Sales */}
+        <div className="rounded-lg bg-white p-6 shadow">
+          <h2 className="text-gray-500">Total Sales</h2>
+          <p className="text-3xl font-bold">
+            ₹{totalSales}
+          </p>
+        </div>
+
+        {/* Paid Orders */}
+        <div className="rounded-lg bg-white p-6 shadow">
+          <h2 className="text-gray-500">Paid Orders</h2>
+          <p className="text-3xl font-bold">
+            {orders.filter(
+              (order) => order.paymentStatus === "paid"
+            ).length}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export const getDiscountedPrice = (
-  price,
-  globalOffer,
-  categoryDiscount,
-  productDiscount
-) => {
-  let finalPrice = Number(price || 0);
-
-  // Global Offer Discount
-  finalPrice = applyDiscount(finalPrice, globalOffer);
-
-  // Category Discount
-  finalPrice = applyDiscount(finalPrice, categoryDiscount);
-
-  // Product Discount
-  finalPrice = applyDiscount(finalPrice, productDiscount);
-
-  return Number(Math.max(0, finalPrice).toFixed(2));
-};
+export default AdminDashboard;
