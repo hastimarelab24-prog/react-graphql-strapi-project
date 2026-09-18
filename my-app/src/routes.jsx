@@ -21,6 +21,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Wishlist from "./pages/wishlist";
 import Checkout from "./components/CheckoutFrom";
 import AdminDashboard from "./admin/AdminDashboard";
+import AdminUsers from "./admin/AdminUsers";
 const routes = [
   <Navbar />,
   {
@@ -99,11 +100,15 @@ const routes = [
   {
     path: "/checkout",
     element: <Checkout />,
-  },
-  {
-    path:"/admin-dashboard",
+  },{
+    path:"/admin",
     element:<AdminDashboard/>
   },
+  {
+    path:"/admin/users",
+    element:<AdminUsers/>
+  },
+  
   <Footer />,
 ];
 

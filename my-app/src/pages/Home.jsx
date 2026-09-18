@@ -298,26 +298,18 @@ function Home() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {data?.products?.map((product) => (
               <Card
-  documentId={product.documentId}
-  name={product.name}
-  price={product.price}
-  stock={product.stock}
-  imageUrl={product.images?.[0]?.url}
-
-  isDiscountActive={product.isDiscountActive}
-  discountType={product.discountType}
-  discountValue={product.discountValue}
-
-  categoryIsDiscountActive={
-    product.category?.isDiscountActive
-  }
-  categoryDiscountType={
-    product.category?.discountType
-  }
-  categoryDiscountValue={
-    product.category?.discountValue
-  }
-/>
+                documentId={product.documentId}
+                name={product.name}
+                price={product.price}
+                stock={product.stock}
+                imageUrl={product.images?.[0]?.url}
+                isDiscountActive={product.isDiscountActive}
+                discountType={product.discountType}
+                discountValue={product.discountValue}
+                categoryIsDiscountActive={product.category?.isDiscountActive}
+                categoryDiscountType={product.category?.discountType}
+                categoryDiscountValue={product.category?.discountValue}
+              />
             ))}
           </div>
         </div>

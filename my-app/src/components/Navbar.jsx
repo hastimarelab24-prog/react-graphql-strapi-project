@@ -13,12 +13,12 @@ const Navbar = () => {
   const { loading, error, data } = useQuery(GET_ALL_PRODUCTS);
   const navigate = useNavigate();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("jwt"));
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
 
   const logout = () => {
-    localStorage.removeItem("jwt");
+    localStorage.removeItem("token");
     window.dispatchEvent(new Event("authChange"));
     setMobileMenuOpen(false);
     navigate("/");
@@ -26,7 +26,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const checkAuth = () => {
-      setIsLoggedIn(!!localStorage.getItem("jwt"));
+      setIsLoggedIn(!!localStorage.getItem("token"));
     };
 
     checkAuth();
@@ -50,7 +50,11 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 z-50 w-full  border-b border-gray-200 bg-white text-gray-800 shadow-sm">
       <div className="container mx-auto flex min-h-[76px] items-center justify-between px-4">
         {/* LOGO */}
-        <Link to="/" onClick={closeMobileMenu} className="group flex items-center gap-3">
+        <Link
+          to="/"
+          onClick={closeMobileMenu}
+          className="group flex items-center gap-3"
+        >
           <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-blue-100 bg-blue-50 shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md md:h-12 md:w-12">
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKlok0F-ptePIrFilbjwvAWr3RUUxtEF9XZJF2300AWA&s=10"
@@ -93,27 +97,21 @@ const Navbar = () => {
             <div className="invisible fixed left-1/2 top-[80px] z-50 mt-4 w-[1250px] max-w-[95vw] -translate-x-1/2 translate-y-2 rounded-xl border border-gray-200 bg-white p-5 opacity-0 shadow-xl transition-all duration-300 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
               <div className="grid grid-cols-4 gap-8">
                 {data?.products?.slice(0, 4).map((product) => (
-             <Card
-  documentId={product.documentId}
-  name={product.name}
-  price={product.price}
-  stock={product.stock}
-  imageUrl={product.images?.[0]?.url}
-
-  isDiscountActive={product.isDiscountActive}
-  discountType={product.discountType}
-  discountValue={product.discountValue}
-
-  categoryIsDiscountActive={
-    product.category?.isDiscountActive
-  }
-  categoryDiscountType={
-    product.category?.discountType
-  }
-  categoryDiscountValue={
-    product.category?.discountValue
-  }
-/>
+                  <Card
+                    documentId={product.documentId}
+                    name={product.name}
+                    price={product.price}
+                    stock={product.stock}
+                    imageUrl={product.images?.[0]?.url}
+                    isDiscountActive={product.isDiscountActive}
+                    discountType={product.discountType}
+                    discountValue={product.discountValue}
+                    categoryIsDiscountActive={
+                      product.category?.isDiscountActive
+                    }
+                    categoryDiscountType={product.category?.discountType}
+                    categoryDiscountValue={product.category?.discountValue}
+                  />
                 ))}
               </div>
             </div>
@@ -135,12 +133,54 @@ const Navbar = () => {
                     Products Type
                   </h3>
                   <ul className="space-y-1">
-                    <li><Link to="/shop?type=simple" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Simple Product</Link></li>
-                    <li><Link to="/shop?type=grouped" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Grouped Product</Link></li>
-                    <li><Link to="/shop?type=variable" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Variable Product</Link></li>
-                    <li><Link to="/shop?type=sale" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Sale Product</Link></li>
-                    <li><Link to="/shop?type=upsell" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Upsell Products</Link></li>
-                    <li><Link to="/shop?type=cross-sell" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Cross-Sell Product</Link></li>
+                    <li>
+                      <Link
+                        to="/shop?type=simple"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Simple Product
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/shop?type=grouped"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Grouped Product
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/shop?type=variable"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Variable Product
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/shop?type=sale"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Sale Product
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/shop?type=upsell"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Upsell Products
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/shop?type=cross-sell"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Cross-Sell Product
+                      </Link>
+                    </li>
                   </ul>
                 </div>
 
@@ -149,11 +189,46 @@ const Navbar = () => {
                     WooCommerce Pages
                   </h3>
                   <ul className="space-y-1">
-                    <li><Link to="/shop" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Shop Page</Link></li>
-                    <li><Link to="/cart" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Cart Page</Link></li>
-                    <li><Link to="/checkout" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Checkout Page</Link></li>
-                    <li><Link to="/account" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">My Account</Link></li>
-                    <li><Link to="/wishlist" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Wishlist Page</Link></li>
+                    <li>
+                      <Link
+                        to="/shop"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Shop Page
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/cart"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Cart Page
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/checkout"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Checkout Page
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/account"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        My Account
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/wishlist"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Wishlist Page
+                      </Link>
+                    </li>
                   </ul>
                 </div>
 
@@ -171,7 +246,9 @@ const Navbar = () => {
                       <h6 className="text-sm font-medium leading-5 text-gray-800 hover:text-blue-600">
                         Google Home - Smart Home Speaker
                       </h6>
-                      <p className="mt-2 text-sm font-semibold text-gray-900">$99.00</p>
+                      <p className="mt-2 text-sm font-semibold text-gray-900">
+                        $99.00
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -203,9 +280,30 @@ const Navbar = () => {
                     Cameras
                   </h3>
                   <ul className="space-y-1">
-                    <li><Link to="/category/backup-camera" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Backup camera</Link></li>
-                    <li><Link to="/category/digital-camera" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Digital Camera</Link></li>
-                    <li><Link to="/category/ip-camera" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">IP camera</Link></li>
+                    <li>
+                      <Link
+                        to="/category/backup-camera"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Backup camera
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/category/digital-camera"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Digital Camera
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/category/ip-camera"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        IP camera
+                      </Link>
+                    </li>
                   </ul>
                 </div>
 
@@ -214,9 +312,30 @@ const Navbar = () => {
                     Phones
                   </h3>
                   <ul className="space-y-1">
-                    <li><Link to="/category/basic-phones" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Basic Phones</Link></li>
-                    <li><Link to="/category/iphones" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">iPhones</Link></li>
-                    <li><Link to="/category/smartphones" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Smartphones</Link></li>
+                    <li>
+                      <Link
+                        to="/category/basic-phones"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Basic Phones
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/category/iphones"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        iPhones
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/category/smartphones"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Smartphones
+                      </Link>
+                    </li>
                   </ul>
                 </div>
 
@@ -225,9 +344,30 @@ const Navbar = () => {
                     TV & Speaker
                   </h3>
                   <ul className="space-y-1">
-                    <li><Link to="/category/home-theatre" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Home Theatre Systems</Link></li>
-                    <li><Link to="/category/speakers" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Party Speakers</Link></li>
-                    <li><Link to="/category/televisions" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Televisions</Link></li>
+                    <li>
+                      <Link
+                        to="/category/home-theatre"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Home Theatre Systems
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/category/speakers"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Party Speakers
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/category/televisions"
+                        className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Televisions
+                      </Link>
+                    </li>
                   </ul>
                 </div>
 
@@ -245,7 +385,9 @@ const Navbar = () => {
                       <h6 className="text-xs font-medium leading-4 text-gray-800 hover:text-blue-600">
                         Google Home Speaker
                       </h6>
-                      <p className="mt-1 text-xs font-semibold text-gray-900">$99.00</p>
+                      <p className="mt-1 text-xs font-semibold text-gray-900">
+                        $99.00
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -274,11 +416,46 @@ const Navbar = () => {
 
             <div className="invisible fixed left-1/2 top-[80px] z-50 mt-4 -translate-x-1/2 translate-y-2 rounded-xl border border-gray-200 bg-white p-5 opacity-0 shadow-xl transition-all duration-300 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
               <ul className="min-w-[160px] space-y-1">
-                <li><Link to="/iconbox" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Icon box</Link></li>
-                <li><Link to="/portfolio" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Portfolio</Link></li>
-                <li><Link to="/gallery" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Gallery</Link></li>
-                <li><Link to="/blog" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Blog</Link></li>
-                <li><Link to="/contact" className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">Contact Us</Link></li>
+                <li>
+                  <Link
+                    to="/iconbox"
+                    className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    Icon box
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/portfolio"
+                    className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    Portfolio
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/gallery"
+                    className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    Gallery
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/blog"
+                    className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/contact"
+                    className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
               </ul>
             </div>
           </li>
@@ -369,7 +546,11 @@ const Navbar = () => {
         }`}
       >
         <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-          <Link to="/" onClick={closeMobileMenu} className="flex items-center gap-2">
+          <Link
+            to="/"
+            onClick={closeMobileMenu}
+            className="flex items-center gap-2"
+          >
             <h3 className="text-lg font-bold text-gray-900">ElectroHub</h3>
           </Link>
           <button
@@ -433,13 +614,49 @@ const Navbar = () => {
             {activeSubMenu === "shop" && (
               <div className="mt-2 space-y-2 pl-4 text-sm text-gray-600">
                 <p className="font-semibold text-gray-900">Product Types</p>
-                <Link to="/shop?type=simple" onClick={closeMobileMenu} className="block py-1">Simple Product</Link>
-                <Link to="/shop?type=grouped" onClick={closeMobileMenu} className="block py-1">Grouped Product</Link>
-                <Link to="/shop?type=variable" onClick={closeMobileMenu} className="block py-1">Variable Product</Link>
+                <Link
+                  to="/shop?type=simple"
+                  onClick={closeMobileMenu}
+                  className="block py-1"
+                >
+                  Simple Product
+                </Link>
+                <Link
+                  to="/shop?type=grouped"
+                  onClick={closeMobileMenu}
+                  className="block py-1"
+                >
+                  Grouped Product
+                </Link>
+                <Link
+                  to="/shop?type=variable"
+                  onClick={closeMobileMenu}
+                  className="block py-1"
+                >
+                  Variable Product
+                </Link>
                 <p className="pt-2 font-semibold text-gray-900">Pages</p>
-                <Link to="/cart" onClick={closeMobileMenu} className="block py-1">Cart Page</Link>
-                <Link to="/checkout" onClick={closeMobileMenu} className="block py-1">Checkout Page</Link>
-                <Link to="/account" onClick={closeMobileMenu} className="block py-1">My Account</Link>
+                <Link
+                  to="/cart"
+                  onClick={closeMobileMenu}
+                  className="block py-1"
+                >
+                  Cart Page
+                </Link>
+                <Link
+                  to="/checkout"
+                  onClick={closeMobileMenu}
+                  className="block py-1"
+                >
+                  Checkout Page
+                </Link>
+                <Link
+                  to="/account"
+                  onClick={closeMobileMenu}
+                  className="block py-1"
+                >
+                  My Account
+                </Link>
               </div>
             )}
           </li>
@@ -459,9 +676,27 @@ const Navbar = () => {
             </button>
             {activeSubMenu === "categories" && (
               <div className="mt-2 space-y-2 pl-4 text-sm text-gray-600">
-                <Link to="/category/digital-camera" onClick={closeMobileMenu} className="block py-1">Digital Camera</Link>
-                <Link to="/category/smartphones" onClick={closeMobileMenu} className="block py-1">Smartphones</Link>
-                <Link to="/category/televisions" onClick={closeMobileMenu} className="block py-1">Televisions</Link>
+                <Link
+                  to="/category/digital-camera"
+                  onClick={closeMobileMenu}
+                  className="block py-1"
+                >
+                  Digital Camera
+                </Link>
+                <Link
+                  to="/category/smartphones"
+                  onClick={closeMobileMenu}
+                  className="block py-1"
+                >
+                  Smartphones
+                </Link>
+                <Link
+                  to="/category/televisions"
+                  onClick={closeMobileMenu}
+                  className="block py-1"
+                >
+                  Televisions
+                </Link>
               </div>
             )}
           </li>

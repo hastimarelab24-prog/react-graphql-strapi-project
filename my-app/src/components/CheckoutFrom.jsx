@@ -19,24 +19,23 @@ const stripePromise = loadStripe(
 // CHECKOUT FORM
 
 const CheckoutForm = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
-  useEffect(()=>{
-    const jwt=localStorage.getItem("token");
-    const user=localStorage.getItem("user");
+  useEffect(() => {
+    const jwt = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
 
-    if(!jwt || !user){
-      navigate("/login",{
-        state:{
-          from:"/checkout",
+    if (!jwt || !user) {
+      navigate("/login", {
+        state: {
+          from: "/checkout",
         },
-        replace:true,
-      })
+        replace: true,
+      });
     }
-  },[navigate])
-const cart=JSON.parse(localStorage.getItem("cart")) || [];
-const user =JSON.parse(localStorage.getItem("user")) || null;
-
+  }, [navigate]);
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const user = JSON.parse(localStorage.getItem("user")) || null;
 
   const stripe = useStripe();
 
@@ -333,9 +332,20 @@ const user =JSON.parse(localStorage.getItem("user")) || null;
         background: "#fff",
       }}
     >
-      <button type="button" onClick={()=>navigate("/cart")}
-        style={{marginBottom:"20px",padding:"10px 16px", border:"1px solid #ddd", borderRadius:"8px", background:"#fff", cursor:"pointer", fontWeight:"600"}}>
-         ← Back to Cart
+      <button
+        type="button"
+        onClick={() => navigate("/cart")}
+        style={{
+          marginBottom: "20px",
+          padding: "10px 16px",
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+          background: "#fff",
+          cursor: "pointer",
+          fontWeight: "600",
+        }}
+      >
+        ← Back to Cart
       </button>
       <h2>Checkout</h2>
 
@@ -537,88 +547,8 @@ const user =JSON.parse(localStorage.getItem("user")) || null;
 // CHECKOUT PAGE
 
 const Checkout = () => {
-
   // GET CART
-  const token
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
 

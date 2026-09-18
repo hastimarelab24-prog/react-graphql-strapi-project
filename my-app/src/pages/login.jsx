@@ -16,21 +16,43 @@ function Login() {
   const [loginUser, { loading, error, data }] = useMutation(LOGIN_USER);
 
   // Auth check & redirect on success
-  useEffect(() => {
-    if (data?.login) {
-      // login jwt token saving
-      localStorage.setItem("jwt", data.login.jwt);
+  // useEffect(() => {
+  //   if (data?.login) {
+  //     // login jwt token saving
+  //     localStorage.setItem("token", data.login.jwt);
 
-      // checkout user saving information 
-      localStorage.setItem("user",JSON.stringify(data.login.user))
-      // Notify navbar
-      window.dispatchEvent(new Event("authChange"));
-        // redirect to checkout if user came from checkout
-      navigate(location.state?.form || "/",{
-        replace:true,
-      });
-    }
-  }, [data, navigate]);
+  //     // checkout user saving information 
+  //     localStorage.setItem("user",JSON.stringify(data.login.user))
+  //     // Notify navbar
+  //     window.dispatchEvent(new Event("authChange"));
+  //       // redirect to checkout if user came from checkout
+  //     navigate(location.state?.form || "/",{
+  //       replace:true,
+  //     });
+  //   }
+  // }, [data, navigate,location]);
+
+
+  useEffect(() => {
+  if (data?.login) {
+    localStorage.setItem("token", data.login.jwt);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(data.login.user)
+    );
+
+    console.log("Strapi JWT saved:", !!data.login.jwt);
+
+    window.dispatchEvent(new Event("authChange"));
+
+    navigate(location.state?.form || "/", {
+      replace: true,
+    });
+  }
+}, [data, navigate, location]);
+
+
 
   // Handle invalid credentials error
   useEffect(() => {
