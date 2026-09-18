@@ -1,32 +1,5 @@
-export default {
-  routes: [
+import { factories } from "@strapi/strapi";
 
-    {
-      method: "POST",
-
-      path: "/orders/create-payment-intent",
-
-      handler:
-        "order.createPaymentIntent",
-
-      config: {
-        auth: false,
-      },
-    },
-
-
-    {
-      method: "POST",
-
-      path: "/orders/create-order",
-
-      handler:
-        "order.createOrder",
-
-      config: {
-        auth: false,
-      },
-    },
-
-  ],
-};
+export default factories.createCoreService(
+  "api::order.order"
+);

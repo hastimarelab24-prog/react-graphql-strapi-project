@@ -7,16 +7,20 @@
     "displayName": "Order"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
-  "pluginOptions": {},
   "attributes": {
     "orderId": {
       "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "amount": {
+      "type": "integer",
       "required": true
     },
     "shippingAddress": {
-      "type": "string",
+      "type": "text",
       "required": true
     },
     "city": {
@@ -29,28 +33,37 @@
     "pin": {
       "type": "integer"
     },
-    "amount": {
-      "type": "integer",
-      "required": true
-    },
     "items": {
       "type": "json",
       "required": true
     },
-    "user": {
-      "type": "string",
-      "required": true
-    },
     "email": {
-      "type": "email",
-      "required": true
+      "type": "email"
     },
     "paymentId": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "paymentStatus": {
-      "type": "string"
+      "type": "enumeration",
+      "enum": ["pending", "paid", "failed", "refunded"],
+      "default": "pending"
+    },
+    "orderStatus": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "confirmed",
+        "shipped",
+        "delivered",
+        "cancelled",
+        "returned"
+      ],
+      "default": "pending"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

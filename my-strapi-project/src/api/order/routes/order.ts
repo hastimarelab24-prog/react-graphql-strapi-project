@@ -1,21 +1,12 @@
-import { factories } from "@strapi/strapi";
-
-export default factories.createCoreRouter("api::order.order", {
-  config: {
-    create: {
-      auth: false,
+export default {
+  routes: [
+    {
+      method: "POST",
+      path: "/orders/create-payment-intent",
+      handler: "api::order.order.createPaymentIntent",
+      config: {
+        auth: false,
+      },
     },
-    find: {
-      auth: false,
-    },
-    findOne: {
-      auth: false,
-    },
-    update: {
-      auth: false,
-    },
-    delete: {
-      auth: false,
-    },
-  },
-});
+  ],
+};
