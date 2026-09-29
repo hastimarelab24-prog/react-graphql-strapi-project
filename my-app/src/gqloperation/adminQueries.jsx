@@ -6,39 +6,14 @@ export const GET_ALL_ORDERS = gql`
       documentId
       orderId
       amount
-      paymentStatus
-      paymentId
-      orderStatus
+      state
       shippingAddress
       city
-      state
       pin
-      items
-      createdAt
-    }
-  }
-`;
-
-export const GET_ADMIN_USERS = gql`
-  query GetAdminUsers {
-    usersPermissionsUsers {
-      username
       email
-      confirmed
-      blocked
+      paymentId
+      paymentStatus
       createdAt
-    }
-  }
-`;
-
-export const GET_ALL_CUSTOMER = gql`
-  query GetAllCustomer {
-    usersPermissionsUsers {
-      data {
-        id
-        username
-        email
-      }
     }
   }
 `;

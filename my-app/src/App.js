@@ -28,8 +28,7 @@ const Routes = () => {
     location.pathname === "/signup" ||
     location.pathname === "/reset-password" ||
     location.pathname==="/checkout" ||
-    location.pathname === "/admin" ||
-    location.pathname==="/admin/users";
+    location.pathname === "/admin" 
   return (
     <>
       {!hideLayout && <Navbar />}

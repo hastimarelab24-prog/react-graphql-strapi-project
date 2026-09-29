@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
 import { useMutation } from "@apollo/client/react";
+
 import { LOGIN_USER } from "../gqloperation/mutation";
 
+
 function Login() {
+
   const navigate = useNavigate();
-  const location=useLocation();
+
+  const location = useLocation();
 
 
   const [formData, setFormData] = useState({
@@ -13,196 +22,313 @@ function Login() {
     password: "",
   });
 
-  const [loginUser, { loading, error, data }] = useMutation(LOGIN_USER);
 
-  // Auth check & redirect on success
-  // useEffect(() => {
-  //   if (data?.login) {
-  //     // login jwt token saving
-  //     localStorage.setItem("token", data.login.jwt);
+  /*
+    Login mutation
+  */
 
-  //     // checkout user saving information 
-  //     localStorage.setItem("user",JSON.stringify(data.login.user))
-  //     // Notify navbar
-  //     window.dispatchEvent(new Event("authChange"));
-  //       // redirect to checkout if user came from checkout
-  //     navigate(location.state?.form || "/",{
-  //       replace:true,
-  //     });
-  //   }
-  // }, [data, navigate,location]);
+  const [
+    loginUser,
+    {
+      loading,
+      error,
+      data,
+    },
+  ] = useMutation(LOGIN_USER);
 
+
+  /*
+    Login successful
+  */
 
   useEffect(() => {
-  if (data?.login) {
-    localStorage.setItem("token", data.login.jwt);
 
-    localStorage.setItem(
-      "user",
-      JSON.stringify(data.login.user)
-    );
-
-    console.log("Strapi JWT saved:", !!data.login.jwt);
-
-    window.dispatchEvent(new Event("authChange"));
-
-    navigate(location.state?.form || "/", {
-      replace: true,
-    });
-  }
-}, [data, navigate, location]);
-
-
-
-  // Handle invalid credentials error
-  useEffect(() => {
-    if (error) {
-      console.log("Login Error", error.message);
-      const message = error.message.toLowerCase();
-      if (
-        message.includes("invalid identifier") ||
-        message.includes("user not found") ||
-        message.includes("identifier")
-      ) {
-        // Optional: redirect on failed user lookup
-        // navigate("/signup");
-      }
-    }
-  }, [error, navigate]);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.identifier || !formData.password) {
-      alert("Please enter email/username and password");
+    if (!data?.login) {
       return;
     }
 
-    try {
-      await loginUser({
-        variables: {
-          input: {
-            identifier: formData.identifier,
-            password: formData.password,
-          },
-        },
-      });
-    } catch (err) {
-      console.log("Login Error", err.message);
+
+    const user = data.login.user;
+
+
+    /*
+      Save JWT token
+    */
+
+    localStorage.setItem(
+      "token",
+      data.login.jwt
+    );
+
+
+    /*
+      Save logged-in user
+    */
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(user)
+    );
+
+
+    /*
+      Notify application
+    */
+
+    window.dispatchEvent(
+      new Event("authChange")
+    );
+
+
+    /*
+      Redirect after login
+    */
+
+    navigate(
+      location.state?.from || "/admin",
+      {
+        replace: true,
+      }
+    );
+
+  }, [
+    data,
+    navigate,
+    location,
+  ]);
+
+
+  /*
+    Login error
+  */
+
+  useEffect(() => {
+
+    if (error) {
+
+      console.log(
+        "Login Error:",
+        error.message
+      );
+
     }
+
+  }, [error]);
+
+
+  /*
+    Input change
+  */
+
+  const handleChange = (e) => {
+
+    setFormData({
+      ...formData,
+
+      [e.target.name]:
+        e.target.value,
+    });
+
   };
 
+
+  /*
+    Submit login
+  */
+
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+
+    /*
+      Validate fields
+    */
+
+    if (
+      !formData.identifier ||
+      !formData.password
+    ) {
+
+      alert(
+        "Please enter email/username and password"
+      );
+
+      return;
+    }
+
+
+    try {
+
+      const response =
+        await loginUser({
+          variables: {
+            input: {
+              identifier:
+                formData.identifier,
+
+              password:
+                formData.password,
+            },
+          },
+        });
+
+
+      console.log(
+        "Login Response:",
+        response
+      );
+
+    } catch (err) {
+
+      console.log(
+        "Login Error:",
+        err.message
+      );
+
+    }
+
+  };
+
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">
-      <div className="w-full max-w-md">
-        {/* Card */}
-        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-xl">
-          {/* Header */}
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-            <p className="mt-2 text-sm text-gray-500">
-              Login To Continue Shopping
-            </p>
+
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-8">
+
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg sm:p-8">
+
+
+        {/* Header */}
+
+        <div className="mb-6 text-center">
+
+          <h1 className="text-2xl font-bold text-gray-900">
+            Login
+          </h1>
+
+          <p className="mt-2 text-sm text-gray-500">
+            Login to your account
+          </p>
+
+        </div>
+
+
+        {/* Error */}
+
+        {error && (
+
+          <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
+
+            {error.message}
+
           </div>
 
-          {/* Error Banner */}
-          {error && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-center">
-              <p className="text-sm font-medium text-red-600">{error.message}</p>
-            </div>
-          )}
+        )}
 
-          {/* Success Banner */}
-          {data?.login?.jwt && (
-            <div className="mb-5 rounded-lg border border-green-400 bg-green-50 p-3 text-center">
-              <p className="text-sm font-medium text-green-600">
-                Login successfully! Redirecting...
-              </p>
-            </div>
-          )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email or Username Input */}
-            <div>
-              <label
-                htmlFor="identifier"
-                className="mb-2 block text-sm font-medium text-gray-600"
-              >
-                Email or Username
-              </label>
-              <input
-                type="text"
-                id="identifier"
-                name="identifier"
-                value={formData.identifier}
-                onChange={handleChange}
-                placeholder="Enter email or username"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-black focus:ring-2 focus:ring-gray-200"
-              />
-            </div>
+        {/* Login Form */}
 
-            {/* Password Input + Forgot Password Link */}
-            <div>
-              <div className="mb-2 flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-600"
-                >
-                  Password
-                </label>
-                <button
-                  type="button"
-                  onClick={() => navigate("/forgot-password")}
-                  className="text-xs font-semibold text-gray-600 hover:text-black hover:underline"
-                >
-                  Forgot Password?
-                </button>
-              </div>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter password"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-black focus:ring-2 focus:ring-gray-200"
-              />
-            </div>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5"
+        >
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
 
-          {/* Signup Switch */}
-          <div className="mt-7 border-t border-gray-100 pt-6 text-center">
-            <span className="text-sm text-gray-500">
-              Don't have an account?{" "}
-            </span>
+          {/* Email / Username */}
+
+          <div>
+
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Email / Username
+            </label>
+
+            <input
+              type="text"
+              name="identifier"
+              value={formData.identifier}
+              onChange={handleChange}
+              placeholder="Enter email or username"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+
+          </div>
+
+
+          {/* Password */}
+
+          <div>
+
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Password
+            </label>
+
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter password"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+
+          </div>
+
+
+          {/* Forgot Password */}
+
+          <div className="text-right">
+
             <button
               type="button"
-              onClick={() => navigate("/signup")}
-              className="text-sm font-semibold text-black hover:underline"
+              className="text-sm font-medium text-blue-600 hover:text-blue-700"
             >
-              Sign Up
+              Forgot Password?
             </button>
+
           </div>
+
+
+          {/* Login Button */}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+
+            {loading
+              ? "Logging in..."
+              : "Login"}
+
+          </button>
+
+        </form>
+
+
+        {/* Signup */}
+
+        <div className="mt-6 text-center text-sm text-gray-500">
+
+          Don't have an account?{" "}
+
+          <button
+            type="button"
+            onClick={() =>
+              navigate("/signup")
+            }
+            className="font-semibold text-blue-600 hover:text-blue-700"
+          >
+            Sign Up
+          </button>
+
         </div>
+
       </div>
+
     </div>
+
   );
 }
+
 
 export default Login;

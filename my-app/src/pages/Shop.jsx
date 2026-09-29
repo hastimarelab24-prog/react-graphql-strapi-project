@@ -8,7 +8,9 @@ import useProductFilters from "../hook/useProductFilters";
 import useProductSearch from "../hook/useProductSearch";
 
 function Shop() {
-  const { loading, error, data } = useQuery(GET_ALL_PRODUCTS);
+  const { loading, error, data } = useQuery(GET_ALL_PRODUCTS,{
+    fetchPolicy:"network-only"
+  });
   // search
   const allProducts = data?.products || [];
 

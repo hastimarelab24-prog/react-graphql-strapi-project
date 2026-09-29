@@ -20,8 +20,8 @@ import ForgotPassword from "./pages/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Wishlist from "./pages/wishlist";
 import Checkout from "./components/CheckoutFrom";
-import AdminDashboard from "./admin/AdminDashboard";
-import AdminUsers from "./admin/AdminUsers";
+import AdminDashboard from "./pages/AdminDashboard";
+
 const routes = [
   <Navbar />,
   {
@@ -100,14 +100,16 @@ const routes = [
   {
     path: "/checkout",
     element: <Checkout />,
-  },{
-    path:"/admin",
-    element:<AdminDashboard/>
   },
   {
-    path:"/admin/users",
-    element:<AdminUsers/>
+    path:"/admin",
+    element:
+    <AdminDashboard/>
   },
+  // {
+  //   path:"/admin/users",
+  //   element:<AdminUsers/>
+  // },
   
   <Footer />,
 ];

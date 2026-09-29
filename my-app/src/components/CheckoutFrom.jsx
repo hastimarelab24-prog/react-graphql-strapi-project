@@ -550,6 +550,15 @@ const Checkout = () => {
   // GET CART
   const token = localStorage.getItem("token");
 
+  const response=await fetch("http://localhost:1337/api/orders/create-payment-intent",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:`Bearer${token}`,
+    },
+    body:JSON.stringify({amount:totalAmount,})
+  })
+
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
   // GET LOGGED-IN USER
