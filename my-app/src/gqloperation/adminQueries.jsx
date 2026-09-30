@@ -4,15 +4,31 @@ export const GET_ALL_ORDERS = gql`
   query GetAllOrders {
     orders {
       documentId
-      orderId
-      amount
-      state
       shippingAddress
       city
+      state
+      amount
+      items
       pin
+      orderId
       email
       paymentId
       paymentStatus
+      orderStatus
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+
+export const GET_ALL_USERS = gql`
+  query GetAllUsers {
+    usersPermissionsUsers {
+      documentId
+      username
+      email
+      confirmed
       createdAt
     }
   }

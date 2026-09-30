@@ -9,11 +9,16 @@ function Cart() {
 
 // checkout function 
 const handlecheckout=()=>{
-  const jwt=localStorage.getItem("jwt");
+  const token=localStorage.getItem("token");
   const user=localStorage.getItem("user");
 
+
+  console.log("checkout  Token", token?"Avalible":"Missing");
+  console.log("Checkout User",user? "Avalible" : "Missing");
+  
+  
   // userlogin not 
-  if(!jwt || !user){
+  if(!token || !user){
     navigate("/login",{
       state:{
         from:"/checkout",

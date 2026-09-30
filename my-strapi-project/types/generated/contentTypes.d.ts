@@ -562,7 +562,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    amount: Schema.Attribute.Integer & Schema.Attribute.Required;
+    amount: Schema.Attribute.Decimal & Schema.Attribute.Required;
     city: Schema.Attribute.String & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -572,22 +572,14 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::order.order'> &
       Schema.Attribute.Private;
-    orderId: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
-    orderStatus: Schema.Attribute.Enumeration<
-      ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled', 'returned']
-    > &
-      Schema.Attribute.DefaultTo<'pending'>;
+    orderId: Schema.Attribute.String & Schema.Attribute.Required;
+    orderStatus: Schema.Attribute.String;
     paymentId: Schema.Attribute.String;
-    paymentStatus: Schema.Attribute.Enumeration<
-      ['pending', 'paid', 'failed', 'refunded']
-    > &
-      Schema.Attribute.DefaultTo<'pending'>;
+    paymentStatus: Schema.Attribute.String;
     pin: Schema.Attribute.Integer;
     publishedAt: Schema.Attribute.DateTime;
     shippingAddress: Schema.Attribute.Text & Schema.Attribute.Required;
-    state: Schema.Attribute.String;
+    state: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

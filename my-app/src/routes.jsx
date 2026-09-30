@@ -20,7 +20,7 @@ import ForgotPassword from "./pages/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Wishlist from "./pages/wishlist";
 import Checkout from "./components/CheckoutFrom";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./admin/AdminDashboard";
 
 const routes = [
   <Navbar />,
@@ -33,8 +33,8 @@ const routes = [
     element: <Login />,
   },
   {
-    path: "/reset-password",
-    element: <ResetPassword />,
+    path: "/forgot-password",
+    element: <ForgotPassword />,
   },
   {
     path: "/signup",

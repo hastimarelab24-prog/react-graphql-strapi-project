@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "node",
+ 
+"module": "node16",
     "lib": ["ES2020"],
     "target": "ES2019",
     "strict": true,
@@ -15,6 +15,7 @@
     "outDir": "dist",
     "rootDir": "."
   },
+
   "include": [
     "./**/*.ts",
     "./**/*.js",

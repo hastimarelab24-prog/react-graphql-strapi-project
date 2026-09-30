@@ -26,7 +26,7 @@ const Routes = () => {
   const hideLayout =
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
-    location.pathname === "/reset-password" ||
+    location.pathname === "/forgot-password" ||
     location.pathname==="/checkout" ||
     location.pathname === "/admin" 
   return (

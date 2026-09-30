@@ -10,15 +10,6 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "orderId": {
-      "type": "string",
-      "required": true,
-      "unique": true
-    },
-    "amount": {
-      "type": "integer",
-      "required": true
-    },
     "shippingAddress": {
       "type": "text",
       "required": true
@@ -28,13 +19,22 @@
       "required": true
     },
     "state": {
-      "type": "string"
+      "type": "string",
+      "required": true
+    },
+    "amount": {
+      "type": "decimal",
+      "required": true
+    },
+    "items": {
+      "type": "json",
+      "required": true
     },
     "pin": {
       "type": "integer"
     },
-    "items": {
-      "type": "json",
+    "orderId": {
+      "type": "string",
       "required": true
     },
     "email": {
@@ -44,21 +44,10 @@
       "type": "string"
     },
     "paymentStatus": {
-      "type": "enumeration",
-      "enum": ["pending", "paid", "failed", "refunded"],
-      "default": "pending"
+      "type": "string"
     },
     "orderStatus": {
-      "type": "enumeration",
-      "enum": [
-        "pending",
-        "confirmed",
-        "shipped",
-        "delivered",
-        "cancelled",
-        "returned"
-      ],
-      "default": "pending"
+      "type": "string"
     },
     "user": {
       "type": "relation",

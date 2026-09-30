@@ -1,155 +1,120 @@
 import React, { useEffect, useState } from "react";
-
 import {
   Elements,
   CardElement,
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
-import { from } from "@apollo/client";
-
-// STRIPE TEST PUBLISHABLE KEY
 
 const stripePromise = loadStripe(
   "pk_test_51UBBuCHFs2FHrv0lW8hxfj2ZHIHvmDgBIWAoU0QxL4zs3JmXLr6RxC4XyhGDfT2PkkPzf5RADFHLIulbFw40PBbc00qDEr7kGf",
 );
 
-// CHECKOUT FORM
-
-const CheckoutForm = () => {
+// checkout form
+const CheckoutForm = ({ cart, user }) => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-
-    if (!jwt || !user) {
-      navigate("/login", {
-        state: {
-          from: "/checkout",
-        },
-        replace: true,
-      });
-    }
-  }, [navigate]);
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const user = JSON.parse(localStorage.getItem("user")) || null;
-
   const stripe = useStripe();
-
   const elements = useElements();
-
-  // STATE
-
+  // from state
   const [shippingAddress, setShippingAddress] = useState("");
-
   const [city, setCity] = useState("");
-
   const [state, setState] = useState("");
-
   const [pin, setPin] = useState("");
-
   const [loading, setLoading] = useState(false);
-
   const [message, setMessage] = useState("");
 
-  // TOTAL AMOUNT
-
+  // calculate cart total
   const totalAmount = cart.reduce((total, item) => {
     return total + Number(item.price || 0) * Number(item.qty || 1);
   }, 0);
 
-  // CREATE ORDER ID
-
+  // creayeOrders id
   const createOrderId = () => {
     return "ORD-" + Date.now();
   };
 
-  // PAYMENT
-
+  // handle payment
   const handlePayment = async (e) => {
     e.preventDefault();
-
     setMessage("");
 
-    // STRIPE CHECK
+    const token = localStorage.getItem("token");
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    // login check
+    if (!token || !currentUser) {
+      navigate("/login", {
+        state: { from: "/checkout" },
+        replace: true,
+      });
+      return;
+    }
 
+    // straipe check
     if (!stripe || !elements) {
       setMessage("Stripe is not loaded yet.");
-
       return;
     }
-
-    // LOGIN CHECK
-
-    if (!user) {
-      setMessage("Please login before checkout.");
-
-      return;
-    }
-
-    // CART CHECK
 
     if (cart.length === 0) {
       setMessage("Your cart is empty.");
-
       return;
     }
-
-    // SHIPPING ADDRESS CHECK
 
     if (!shippingAddress.trim()) {
       setMessage("Please enter shipping address.");
-
       return;
     }
-
-    // CITY CHECK
 
     if (!city.trim()) {
       setMessage("Please enter city.");
-
       return;
     }
-
-    // PIN CHECK
 
     if (!pin.trim()) {
       setMessage("Please enter PIN code.");
-
       return;
     }
 
-    // AMOUNT CHECK
-
     if (totalAmount <= 0) {
       setMessage("Invalid order amount.");
-
       return;
     }
 
     setLoading(true);
 
+    // get jwt
     try {
-      // CREATE STRIPE PAYMENT INTENT
+      // const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("Login session expired. Please login again.");
+      }
+
+      // strapi amount
+      const stripeAmount = Math.round(Number(totalAmount) * 100);
+      console.log("Strapi Amount", totalAmount);
+      console.log("Strapi amount paise", stripeAmount);
+      if (!Number.isInteger(stripeAmount) || stripeAmount <= 0) {
+        throw new Error("Invalid strapi amount");
+      }
 
       const paymentIntentResponse = await fetch(
         "http://localhost:1337/api/orders/create-payment-intent",
         {
           method: "POST",
-
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-
           body: JSON.stringify({
-            amount: totalAmount,
+            amount: stripeAmount,
           }),
         },
       );
 
+      // read response
       const paymentIntentData = await paymentIntentResponse.json();
 
       console.log("Payment Intent:", paymentIntentData);
@@ -162,13 +127,13 @@ const CheckoutForm = () => {
         );
       }
 
+      // get client secret
+
       const clientSecret = paymentIntentData.clientSecret;
 
       if (!clientSecret) {
         throw new Error("Client secret not received from Strapi.");
       }
-
-      // GET CARD ELEMENT
 
       const cardElement = elements.getElement(CardElement);
 
@@ -176,29 +141,22 @@ const CheckoutForm = () => {
         throw new Error("Card details not found.");
       }
 
-      // CONFIRM STRIPE PAYMENT
-
+      // confirm strapi payment
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement,
-
           billing_details: {
-            name: user.name || user.username || "Test User",
-
-            email: user.email || "test@example.com",
+            name: currentUser.name || currentUser.username || "Test User",
+            email: currentUser.email || "test@example.com",
           },
         },
       });
 
       console.log("Stripe Result:", result);
 
-      // STRIPE ERROR
-
       if (result.error) {
         throw new Error(result.error.message);
       }
-
-      // PAYMENT INTENT
 
       const paymentIntent = result.paymentIntent;
 
@@ -206,83 +164,64 @@ const CheckoutForm = () => {
         throw new Error("Payment information not received.");
       }
 
-      // SUCCESS CHECK
-
       if (paymentIntent.status !== "succeeded") {
         throw new Error("Payment was not successful.");
       }
 
       console.log("Payment Successful:", paymentIntent.id);
 
-      // USER ID
+      // get user id
+      const userId =
+        currentUser.id ||
+        currentUser.documentId ||
+        currentUser.username ||
+        currentUser.email;
+      // create orders in strapi
 
-      const userId = user.id || user.documentId || user.username || user.email;
+    // create orders in strapi
+const orderResponse = await fetch(
+  "http://localhost:1337/api/orders/create-order",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      data: {
+        orderId: createOrderId(),
+        shippingAddress: shippingAddress.trim(),
+        city: city.trim(),
+        state: state.trim(),
+        pin: Number(pin),
+        amount: totalAmount,
+        items: cart,
+        paymentId: paymentIntent.id,
+        paymentStatus: "paid",
+        orderStatus: "pending",
+      },
+    }),
+  }
+);
 
-      // CREATE ORDER IN STRAPI
+const orderResult = await orderResponse.json();
 
-      const orderResponse = await fetch(
-        "http://localhost:1337/api/orders/create-order",
-        {
-          method: "POST",
+console.log("STRAPI ORDER RESPONSE:", orderResult);
 
-          headers: {
-            "Content-Type": "application/json",
-          },
+if (!orderResponse.ok) {
+  throw new Error(
+    orderResult?.error?.message ||
+      orderResult?.message ||
+      "Order creation failed"
+  );
+}
 
-          body: JSON.stringify({
-            data: {
-              // ORDER ID
-
-              orderId: createOrderId(),
-
-              // SHIPPING ADDRESS
-
-              shippingAddress: shippingAddress.trim(),
-
-              // CITY
-
-              city: city.trim(),
-
-              // STATE
-
-              state: state.trim(),
-
-              // PIN
-              pin: Number(pin),
-
-              // AMOUNT
-
-              amount: totalAmount,
-
-              // CART ITEMS
-
-              items: cart,
-
-              // USER
-
-              user: String(userId),
-
-              // EMAIL
-
-              email: user.email || "test@example.com",
-
-              // STRIPE PAYMENT ID
-
-              paymentId: paymentIntent.id,
-
-              // PAYMENT STATUS
-
-              paymentStatus: "paid",
-            },
-          }),
-        },
-      );
+// Remove the second await orderResponse.json() call that was here!
+      // read orders resp
 
       const orderData = await orderResponse.json();
 
       console.log("Strapi Order:", orderData);
-
-      // ORDER ERROR
 
       if (!orderResponse.ok) {
         throw new Error(
@@ -292,18 +231,12 @@ const CheckoutForm = () => {
         );
       }
 
-      // SUCCESS
-
       setMessage("Payment successful! Order created successfully.");
-
-      // CLEAR CART
 
       localStorage.removeItem("cart");
 
-      // REDIRECT
-
       setTimeout(() => {
-        window.location.href = "/";
+        navigate("/");
       }, 2500);
     } catch (error) {
       console.error("Payment Error:", error);
@@ -314,21 +247,14 @@ const CheckoutForm = () => {
     }
   };
 
-  // UI
-
   return (
     <div
       style={{
         maxWidth: "500px",
-
         margin: "90px auto",
-
         padding: "25px",
-
         border: "1px solid #ddd",
-
         borderRadius: "12px",
-
         background: "#fff",
       }}
     >
@@ -347,25 +273,14 @@ const CheckoutForm = () => {
       >
         ← Back to Cart
       </button>
+
       <h2>Checkout</h2>
 
-      {/* 
-          TOTAL
-       */}
-
-      <div
-        style={{
-          marginBottom: "20px",
-        }}
-      >
+      <div style={{ marginBottom: "20px" }}>
         <h3>Total: ₹{totalAmount.toFixed(2)}</h3>
       </div>
 
       <form onSubmit={handlePayment}>
-        {/* 
-            SHIPPING ADDRESS
-         */}
-
         <label>Shipping Address</label>
 
         <textarea
@@ -384,10 +299,6 @@ const CheckoutForm = () => {
             boxSizing: "border-box",
           }}
         />
-
-        {/* 
-            CITY
-         */}
 
         <label>City</label>
 
@@ -408,10 +319,6 @@ const CheckoutForm = () => {
           }}
         />
 
-        {/* 
-            STATE
-         */}
-
         <label>State</label>
 
         <input
@@ -419,6 +326,7 @@ const CheckoutForm = () => {
           value={state}
           onChange={(e) => setState(e.target.value)}
           placeholder="Enter state"
+          required
           style={{
             width: "100%",
             padding: "12px",
@@ -429,10 +337,6 @@ const CheckoutForm = () => {
             boxSizing: "border-box",
           }}
         />
-
-        {/* 
-            PIN
-         */}
 
         <label>PIN Code</label>
 
@@ -453,22 +357,14 @@ const CheckoutForm = () => {
           }}
         />
 
-        {/* 
-            CARD
-         */}
-
         <label>Card Details</label>
 
         <div
           style={{
             border: "1px solid #ccc",
-
             padding: "15px",
-
             borderRadius: "8px",
-
             marginTop: "6px",
-
             marginBottom: "20px",
           }}
         >
@@ -477,14 +373,11 @@ const CheckoutForm = () => {
               style: {
                 base: {
                   fontSize: "16px",
-
                   color: "#32325d",
-
                   "::placeholder": {
                     color: "#aab7c4",
                   },
                 },
-
                 invalid: {
                   color: "#fa755a",
                 },
@@ -492,10 +385,6 @@ const CheckoutForm = () => {
             }}
           />
         </div>
-
-        {/* 
-            PAY BUTTON
-         */}
 
         <button
           type="submit"
@@ -515,23 +404,15 @@ const CheckoutForm = () => {
         </button>
       </form>
 
-      {/* 
-          MESSAGE
-       */}
-
       {message && (
         <div
           style={{
             marginTop: "20px",
-
             padding: "12px",
-
             borderRadius: "8px",
-
             background: message.toLowerCase().includes("successful")
               ? "#e8f5e9"
               : "#ffebee",
-
             color: message.toLowerCase().includes("successful")
               ? "green"
               : "red",
@@ -544,44 +425,28 @@ const CheckoutForm = () => {
   );
 };
 
-// CHECKOUT PAGE
-
 const Checkout = () => {
-  // GET CART
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-  const response=await fetch("http://localhost:1337/api/orders/create-payment-intent",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:`Bearer${token}`,
-    },
-    body:JSON.stringify({amount:totalAmount,})
-  })
-
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  // GET LOGGED-IN USER
-  const user = JSON.parse(localStorage.getItem("user")) || null;
-
-  // LOGIN CHECK
+  useEffect(() => {
+    if (!token || !user) {
+      navigate("/login", {
+        state: {
+          from: location.pathname,
+        },
+        replace: true,
+      });
+    }
+  }, [token, user, navigate, location.pathname]);
 
   if (!token || !user) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">Please Login First</h2>
-          <p className="mt-2 text-gray-500">
-            You must login before completing checkout.
-          </p>
-        </div>
-      </div>
-    );
+    return null;
   }
-
-  //
-  // STRIPE
-  //
 
   return (
     <Elements stripe={stripePromise}>
