@@ -561,6 +561,14 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
   options: {
     draftAndPublish: false;
   };
+  pluginOptions: {
+    'content-manager': {
+      visible: true;
+    };
+    'content-type-builder': {
+      visible: true;
+    };
+  };
   attributes: {
     amount: Schema.Attribute.Decimal & Schema.Attribute.Required;
     city: Schema.Attribute.String & Schema.Attribute.Required;

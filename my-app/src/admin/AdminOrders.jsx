@@ -354,7 +354,6 @@
 // export default AdminOrders;
 
 
-
 import React from "react";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
@@ -363,28 +362,31 @@ import {
   FiRefreshCw,
   FiXCircle,
   FiMapPin,
-  FiMail,
   FiEye,
 } from "react-icons/fi";
 
-// 正確 (Correct) Strapi Schema Query
+// GraphQL Query to fetch all orders from Strapi
 export const GET_ALL_ORDERS = gql`
   query GetAllOrders {
     orders {
-      documentId
-      shippingAddress
-      city
-      state
-      amount
-      items
-      pin
-      orderId
-      email
-      paymentId
-      paymentStatus
-      orderStatus
-      createdAt
-      updatedAt
+      data {
+        id
+        attributes {
+          shippingAddress
+          city
+          state
+          amount
+          items
+          pin
+          orderId
+          email
+          paymentId
+          paymentStatus
+          orderStatus
+          createdAt
+          updatedAt
+        }
+      }
     }
   }
 `;
@@ -394,7 +396,12 @@ const AdminOrders = () => {
     fetchPolicy: "network-only",
   });
 
-  const orders = data?.orders || [];
+  // Strapi v4 response માંથી data સોર્ટ કરીને કાઢવો
+  const rawOrders = data?.orders?.data || [];
+  const orders = rawOrders.map((item) => ({
+    id: item.id,
+    ...item.attributes,
+  }));
 
   const formatAmount = (amount) => {
     if (amount === null || amount === undefined) return "0";
@@ -419,7 +426,7 @@ const AdminOrders = () => {
 
     alert(
       `Order Details\n\n` +
-        `Document ID: ${order.documentId || "N/A"}\n` +
+        `ID: ${order.id || "N/A"}\n` +
         `Order ID: ${order.orderId || "N/A"}\n` +
         `Email: ${order.email || "N/A"}\n` +
         `Amount: ₹${formatAmount(order.amount)}\n` +
@@ -517,7 +524,7 @@ const AdminOrders = () => {
               <thead>
                 <tr className="border-b bg-gray-50">
                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-                    Document ID
+                    ID
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                     Shipping Address
@@ -542,12 +549,12 @@ const AdminOrders = () => {
               <tbody>
                 {orders.map((order) => (
                   <tr
-                    key={order.documentId}
+                    key={order.id}
                     className="border-b last:border-0 hover:bg-gray-50"
                   >
-                    {/* DOCUMENT ID */}
+                    {/* ID */}
                     <td className="px-6 py-5 font-semibold text-blue-600">
-                      {order.documentId}
+                      {order.id}
                     </td>
 
                     {/* SHIPPING ADDRESS */}

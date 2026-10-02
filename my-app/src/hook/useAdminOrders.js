@@ -1,17 +1,40 @@
-import { useQuery } from '@apollo/client/react'
-import React from 'react'
-import { GET_ALL_ORDERS } from '../gqloperation/adminQueries'
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client/react/hooks";
 
-const useAdminOrders = () => {
-    const {data,loading,error}=useQuery(GET_ALL_ORDERS);
-    const orders=data?.orders || [];
-    const totalOrders=orders.length;
-    const pendingOrders=orders.filter((order)=>order.status?.toLowerCase()==="pending").length;
-  
-  const totalSales=orders.reduce((total,order)=>total+Number(order.totalAmount || 0),0)
-    return {
-        orders,loading,error,totalOrders,pendingOrders,totalSales,
+export const GET_ALL_ORDERS = gql`
+  query GetAllOrders {
+    orders: adminOrders {
+      documentId
+      shippingAddress
+      city
+      state
+      amount
+      items
+      pin
+      orderId
+      email
+      paymentId
+      paymentStatus
+      orderStatus
+      createdAt
+      updatedAt
     }
-}
+  }
+`;
 
-export default useAdminOrders
+export const useAdminOrders = () => {
+  const { data, loading, error, refetch } = useQuery(GET_ALL_ORDERS, {
+    fetchPolicy: "network-only",
+  });
+
+  const orders = data?.orders || [];
+
+  return {
+    orders,
+    loading,
+    error,
+    refetch,
+  };
+};
+
+export default useAdminOrders;
