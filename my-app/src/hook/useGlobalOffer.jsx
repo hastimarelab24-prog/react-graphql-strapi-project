@@ -1,9 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { data } from 'react-router-dom';
 const API_URL = "http://localhost:1337";
 
+
+// public header
+const getPublicHeaders = ()=>{
+    return{"Content-Type" : "application/json",}
+}
+
 // get the logged in user token
-const getHeaders = ()=>{
+const getAuthHeaders = ()=>{
     const token = localStorage.getItem("token");
 
     if(!token){
@@ -28,7 +33,7 @@ const getHeaders = ()=>{
             setError("");
             const response = await fetch(`${API_URL}/api/global-offer`,{
                 method:"GET",
-                headers:getHeaders(),
+                headers:getPublicHeaders(),
             })
 
             const result = await response.json();
@@ -60,13 +65,13 @@ const getHeaders = ()=>{
             setError("");
             const response = await fetch(`${API_URL}/api/global-offer`,{
                 method:"PUT",
-                headers:getHeaders(),
+                headers:getAuthHeaders(),
                 body:JSON.stringify({
                     data:{
-                        name:formData.name.trim(),
-                        isActive:formData.isActive,
-                        discountType:formData.discountType,
-                        discountValue:Number(formData.discountValue),
+                        name:formData.name.trim() || "Global Offer",
+                        isActive:Boolean(formData.isActive),
+                        discountType:formData.discountType || "percentage", 
+                        discountValue:Number(formData.discountValue) || 0,
                     }
                 })
             })
@@ -103,3 +108,5 @@ const getHeaders = ()=>{
   return {offer,loading,saving,error,fetchOffer,saveOffer}
 }
 export default useGlobalOffer;
+
+

@@ -17,6 +17,9 @@ import AdminStatCard from "../admin/AdminStatCard";
 import AdminOrders from "./AdminOrders";
 import AdminUsers from "./User"; // <--- Imported Alag Component
 import { GET_ALL_ORDERS, GET_ALL_USERS } from "../gqloperation/adminQueries";
+
+import AdminCategories from "../admin/AdminCategories"
+import Discount from "../admin/Discount"
 import AdminProducts from "./AdminProducts"; // <--- Imported Alag Component
 const AdminDashboard = () => {
   const [activePage, setActivePage] = useState("Dashboard");
@@ -98,7 +101,10 @@ const AdminDashboard = () => {
       case "Dashboard":
         return renderDashboard();
         case "Products":
-        return <AdminProducts />;;
+        return <AdminProducts />;
+        case "Category": return <AdminCategories /> ;
+        case "Discount":
+        return <Discount />;
       case "Orders":
         return <AdminOrders />;
       case "Users":

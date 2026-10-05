@@ -17,6 +17,13 @@ const AdminSidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }
       icon: <FiGrid />,
     },
     {
+      name:"Discount",
+  
+    },
+    {
+      name:"Category"
+    },
+    {
       name: "Products",
       icon: <FiPackage />,
     },

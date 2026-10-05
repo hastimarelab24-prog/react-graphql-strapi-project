@@ -18,12 +18,31 @@ const httpLink = createHttpLink({
   uri: "http://localhost:1337/graphql",
 });
 
-// Apollo client 
-const client = new ApolloClient({
-  link: httpLink,
-  cache: new InMemoryCache(),
-});
 
+
+// const authLink = setContext((_,{headers})=>{
+//   const token = localStorage.getItem("token");
+//  console.log("apollo token" , token ? "Token Exists" :" No token");
+ 
+//   return {
+//     headers:{
+//       ...headers,
+//       ...(token ? {Authorization : `Bearer ${token}`,} :{}),
+//     }
+//   }
+// })
+
+
+// // Apollo client 
+// const client = new ApolloClient({
+//   link: authLink.concat(httpLink),
+//   cache: new InMemoryCache(),
+// });
+
+const client =new ApolloClient({
+    link:httpLink,
+    cache:new InMemoryCache()
+})
 const Routes = () => {
   const elements = useRoutes(routes);
   const location = useLocation();

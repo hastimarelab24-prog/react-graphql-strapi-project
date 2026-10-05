@@ -1,3 +1,4 @@
+"use strict"
 module.exports = [
   "strapi::logger",
   "strapi::errors",
