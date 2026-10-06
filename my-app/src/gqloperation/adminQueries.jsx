@@ -21,7 +21,6 @@ export const GET_ALL_ORDERS = gql`
   }
 `;
 
-
 export const GET_ALL_USERS = gql`
   query GetAllUsers {
     usersPermissionsUsers {

@@ -35,6 +35,31 @@ const AdminDashboard = () => {
 
   const orders = ordersData?.orders || [];
   const users = usersData?.usersPermissionsUsers || [];
+  const today = new Date();
+
+const isToday = (dateValue) => {
+  if (!dateValue) return false;
+
+  const date = new Date(dateValue);
+
+  return (
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  );
+};
+
+const activeToday = users.filter((user) =>
+  isToday(user.lastLoginAt)
+).length;
+
+const currentlyLoggedIn = users.filter(
+  (user) => user.isOnline === true
+).length;
+
+const loggedOut = users.filter(
+  (user) => user.isOnline !== true
+).length;
 
   const stats = [
     {

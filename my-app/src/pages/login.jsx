@@ -228,13 +228,13 @@
 // export default Login;
 
 
-
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import { FiEye, FiEyeOff, FiLogIn } from "react-icons/fi";
 
 const API_URL = "http://localhost:1337";
 
-function Login() {
+const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -243,10 +243,10 @@ function Login() {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -254,177 +254,286 @@ function Login() {
       ...prev,
       [name]: value,
     }));
+
+    if (error) {
+      setError("");
+    }
   };
 
-  // Login with Strapi REST API
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
 
-    if (!formData.identifier.trim() || !formData.password) {
-      setError("Please enter email/username and password.");
+    const identifier = formData.identifier.trim();
+    const password = formData.password;
+
+    if (!identifier) {
+      setError("Please enter your email or username.");
       return;
     }
 
-    try {
-      setLoading(true);
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
 
-      const response = await fetch(
-        `${API_URL}/api/auth/local`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            identifier: formData.identifier.trim(),
-            password: formData.password,
-          }),
-        }
-      );
+    setLoading(true);
+
+    try {
+      console.log("Sending login request...");
+
+      const response = await fetch(`${API_URL}/api/auth/local`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          identifier,
+          password,
+        }),
+      });
 
       const result = await response.json();
 
       console.log("Strapi login status:", response.status);
+      console.log("Strapi login response:", result);
 
       if (!response.ok) {
+        if (response.status === 400) {
+          throw new Error(
+            result?.error?.message ||
+              "Invalid email/username or password."
+          );
+        }
+
+        if (response.status === 403) {
+          throw new Error(
+            result?.error?.message ||
+              "This account is not allowed to login."
+          );
+        }
+
+        if (response.status === 500) {
+          throw new Error(
+            "Strapi server error. Please check your Strapi terminal."
+          );
+        }
+
         throw new Error(
           result?.error?.message || "Login failed."
         );
       }
 
-      if (!result.jwt || !result.user) {
-        throw new Error("Strapi did not return a valid JWT.");
+      if (!result?.jwt || !result?.user) {
+        throw new Error(
+          "Strapi did not return a valid JWT or user."
+        );
       }
 
-      // Save Strapi Users & Permissions JWT
-      localStorage.setItem("token", result.jwt);
+      console.log("Login successful:", result.user);
 
-      // Save logged-in user
+      // Store authentication
+      localStorage.setItem("token", result.jwt);
       localStorage.setItem(
         "user",
         JSON.stringify(result.user)
       );
 
-      // Notify other components about login
+      /*
+       * Update login activity.
+       * If this endpoint is not ready yet, login will
+       * still continue successfully.
+       */
+      try {
+        const activityResponse = await fetch(
+          `${API_URL}/api/auth/update-login-status`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${result.jwt}`,
+            },
+          }
+        );
+
+        const activityResult = await activityResponse.json();
+
+        console.log(
+          "Login activity status:",
+          activityResponse.status
+        );
+
+        console.log(
+          "Login activity response:",
+          activityResult
+        );
+      } catch (activityError) {
+        console.warn(
+          "Login activity update failed:",
+          activityError
+        );
+      }
+
+      // Notify Navbar/AuthContext
       window.dispatchEvent(new Event("authChange"));
 
-      // Navigate to previous page or home
-      const from = location.state?.from || "/";
+      /*
+       * Redirect user to the page from which they came.
+       * Otherwise go to home page.
+       */
+      const from =
+        location.state?.from?.pathname ||
+        location.state?.from ||
+        "/";
 
       navigate(from, {
         replace: true,
       });
+    } catch (error) {
+      console.error("Login error:", error);
 
-    } catch (err) {
-      console.error("Login error:", err);
-      setError(err.message || "Unable to login.");
+      setError(
+        error?.message ||
+          "Unable to login. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+              <FiLogIn size={26} />
+            </div>
 
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg sm:p-8">
+            <h1 className="text-2xl font-bold text-gray-800">
+              Welcome Back
+            </h1>
 
-        {/* Heading */}
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Login
-          </h1>
-
-          <p className="mt-2 text-sm text-gray-500">
-            Login to your account
-          </p>
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-            {error}
-          </div>
-        )}
-
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-
-          {/* Email / Username */}
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Email / Username
-            </label>
-
-            <input
-              type="text"
-              name="identifier"
-              value={formData.identifier}
-              onChange={handleChange}
-              placeholder="Enter email or username"
-              autoComplete="username"
-              required
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
+            <p className="mt-2 text-sm text-gray-500">
+              Login to continue to your account
+            </p>
           </div>
 
-          {/* Password */}
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Password
-            </label>
+          {/* Error */}
+          {error && (
+            <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+              <p className="text-sm font-medium text-red-600">
+                {error}
+              </p>
+            </div>
+          )}
 
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter password"
-              autoComplete="current-password"
-              required
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
-          </div>
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5"
+          >
+            {/* Email / Username */}
+            <div>
+              <label
+                htmlFor="identifier"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                Email or Username
+              </label>
 
-          {/* Forgot Password */}
-          <div className="text-right">
+              <input
+                id="identifier"
+                name="identifier"
+                type="text"
+                value={formData.identifier}
+                onChange={handleChange}
+                placeholder="Enter email or username"
+                autoComplete="username"
+                disabled={loading}
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-100"
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
+
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter password"
+                  autoComplete="current-password"
+                  disabled={loading}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-100"
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword((prev) => !prev)
+                  }
+                  disabled={loading}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? (
+                    <FiEyeOff size={19} />
+                  ) : (
+                    <FiEye size={19} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Forgot Password */}
+            <div className="flex justify-end">
+              <Link
+                to="/forgot-password"
+                className="text-sm font-medium text-blue-600 hover:text-blue-700"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
+            {/* Login button */}
             <button
-              type="button"
-              onClick={() => navigate("/forgot-password")}
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Forgot Password?
+              {loading ? "Logging in..." : "Login"}
             </button>
+          </form>
+
+          {/* Signup */}
+          <div className="mt-6 text-center text-sm text-gray-500">
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className="font-semibold text-blue-600 hover:text-blue-700"
+            >
+              Create Account
+            </Link>
           </div>
-
-          {/* Login Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-
-        </form>
-
-        {/* Signup */}
-        <div className="mt-6 text-center text-sm text-gray-500">
-          Don't have an account?{" "}
-
-          <button
-            type="button"
-            onClick={() => navigate("/signup")}
-            className="font-semibold text-blue-600 hover:text-blue-700"
-          >
-            Sign Up
-          </button>
         </div>
-
       </div>
     </div>
   );
-}
+};
 
 export default Login;
