@@ -227,10 +227,18 @@
 
 // export default Login;
 
-
 import React, { useState } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import { FiEye, FiEyeOff, FiLogIn } from "react-icons/fi";
+import {
+  useLocation,
+  useNavigate,
+  Link,
+} from "react-router-dom";
+
+import {
+  FiEye,
+  FiEyeOff,
+  FiLogIn,
+} from "react-icons/fi";
 
 const API_URL = "http://localhost:1337";
 
@@ -243,7 +251,9 @@ const Login = () => {
     password: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] =
+    useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -265,39 +275,67 @@ const Login = () => {
 
     setError("");
 
-    const identifier = formData.identifier.trim();
+    const identifier =
+      formData.identifier.trim();
+
     const password = formData.password;
 
     if (!identifier) {
-      setError("Please enter your email or username.");
+      setError(
+        "Please enter your email or username."
+      );
       return;
     }
 
     if (!password) {
-      setError("Please enter your password.");
+      setError(
+        "Please enter your password."
+      );
       return;
     }
 
     setLoading(true);
 
     try {
-      console.log("Sending login request...");
+      console.log(
+        "LOGIN REQUEST:",
+        identifier
+      );
 
-      const response = await fetch(`${API_URL}/api/auth/local`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          identifier,
-          password,
-        }),
-      });
+      // -------------------------
+      // Login
+      // -------------------------
 
-      const result = await response.json();
+      const response = await fetch(
+        `${API_URL}/api/auth/local`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            identifier,
+            password,
+          }),
+        }
+      );
 
-      console.log("Strapi login status:", response.status);
-      console.log("Strapi login response:", result);
+      const result =
+        await response.json();
+
+      console.log(
+        "LOGIN STATUS:",
+        response.status
+      );
+
+      console.log(
+        "LOGIN RESPONSE:",
+        result
+      );
+
+      // -------------------------
+      // Error handling
+      // -------------------------
 
       if (!response.ok) {
         if (response.status === 400) {
@@ -321,67 +359,106 @@ const Login = () => {
         }
 
         throw new Error(
-          result?.error?.message || "Login failed."
+          result?.error?.message ||
+            "Login failed."
         );
       }
 
-      if (!result?.jwt || !result?.user) {
+      // -------------------------
+      // Validate response
+      // -------------------------
+
+      if (
+        !result?.jwt ||
+        !result?.user
+      ) {
         throw new Error(
           "Strapi did not return a valid JWT or user."
         );
       }
 
-      console.log("Login successful:", result.user);
-
-      // Store authentication
-      localStorage.setItem("token", result.jwt);
-      localStorage.setItem(
-        "user",
-        JSON.stringify(result.user)
+      console.log(
+        "LOGIN SUCCESS USER:",
+        result.user
       );
 
-      /*
-       * Update login activity.
-       * If this endpoint is not ready yet, login will
-       * still continue successfully.
-       */
-      try {
-        const activityResponse = await fetch(
-          `${API_URL}/api/auth/update-login-status`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${result.jwt}`,
-            },
-          }
-        );
+      // -------------------------
+      // Save actual user
+      // -------------------------
 
-        const activityResult = await activityResponse.json();
+      const loggedInUser = {
+        ...result.user,
 
-        console.log(
-          "Login activity status:",
-          activityResponse.status
-        );
+        username:
+          result.user.username || "",
 
-        console.log(
-          "Login activity response:",
-          activityResult
-        );
-      } catch (activityError) {
-        console.warn(
-          "Login activity update failed:",
-          activityError
-        );
-      }
+        email:
+          result.user.email || "",
+      };
 
-      // Notify Navbar/AuthContext
-      window.dispatchEvent(new Event("authChange"));
+      localStorage.setItem(
+        "token",
+        result.jwt
+      );
 
-      /*
-       * Redirect user to the page from which they came.
-       * Otherwise go to home page.
-       */
+      localStorage.setItem(
+        "user",
+        JSON.stringify(loggedInUser)
+      );
+
+  // -------------------------
+// Update Login Activity
+// -------------------------
+
+try {
+  const activityResponse = await fetch(
+    `${API_URL}/api/auth/update-login-status`,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${result.jwt}`,
+      },
+    }
+  );
+
+  const activityResult = await activityResponse.json();
+
+  console.log(
+    "LOGIN ACTIVITY STATUS:",
+    activityResponse.status
+  );
+
+  console.log(
+    "LOGIN ACTIVITY RESPONSE:",
+    activityResult
+  );
+
+  if (!activityResponse.ok) {
+    console.error(
+      "Login activity update failed:",
+      activityResult
+    );
+  }
+} catch (activityError) {
+  console.error(
+    "Login activity update failed:",
+    activityError
+  );
+}
+      // -------------------------
+      // Notify Navbar/Auth
+      // -------------------------
+
+      window.dispatchEvent(
+        new Event("authChange")
+      );
+
+      // -------------------------
+      // Redirect
+      // -------------------------
+
       const from =
         location.state?.from?.pathname ||
         location.state?.from ||
@@ -391,7 +468,10 @@ const Login = () => {
         replace: true,
       });
     } catch (error) {
-      console.error("Login error:", error);
+      console.error(
+        "Login error:",
+        error
+      );
 
       setError(
         error?.message ||
@@ -403,11 +483,15 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8">
+
+        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-lg sm:p-8">
+
           {/* Header */}
-          <div className="text-center mb-8">
+
+          <div className="mb-8 text-center">
+
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-blue-600">
               <FiLogIn size={26} />
             </div>
@@ -419,9 +503,11 @@ const Login = () => {
             <p className="mt-2 text-sm text-gray-500">
               Login to continue to your account
             </p>
+
           </div>
 
           {/* Error */}
+
           {error && (
             <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
               <p className="text-sm font-medium text-red-600">
@@ -431,12 +517,16 @@ const Login = () => {
           )}
 
           {/* Form */}
+
           <form
             onSubmit={handleSubmit}
             className="space-y-5"
           >
+
             {/* Email / Username */}
+
             <div>
+
               <label
                 htmlFor="identifier"
                 className="mb-2 block text-sm font-medium text-gray-700"
@@ -453,12 +543,16 @@ const Login = () => {
                 placeholder="Enter email or username"
                 autoComplete="username"
                 disabled={loading}
+                required
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-100"
               />
+
             </div>
 
             {/* Password */}
+
             <div>
+
               <label
                 htmlFor="password"
                 className="mb-2 block text-sm font-medium text-gray-700"
@@ -467,6 +561,7 @@ const Login = () => {
               </label>
 
               <div className="relative">
+
                 <input
                   id="password"
                   name="password"
@@ -480,13 +575,16 @@ const Login = () => {
                   placeholder="Enter password"
                   autoComplete="current-password"
                   disabled={loading}
+                  required
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-100"
                 />
 
                 <button
                   type="button"
                   onClick={() =>
-                    setShowPassword((prev) => !prev)
+                    setShowPassword(
+                      (prev) => !prev
+                    )
                   }
                   disabled={loading}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
@@ -497,40 +595,55 @@ const Login = () => {
                     <FiEye size={19} />
                   )}
                 </button>
+
               </div>
+
             </div>
 
-            {/* Forgot Password */}
+            {/* Forgot */}
+
             <div className="flex justify-end">
+
               <Link
                 to="/forgot-password"
                 className="text-sm font-medium text-blue-600 hover:text-blue-700"
               >
                 Forgot Password?
               </Link>
+
             </div>
 
-            {/* Login button */}
+            {/* Login */}
+
             <button
               type="submit"
               disabled={loading}
               className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading
+                ? "Logging in..."
+                : "Login"}
             </button>
+
           </form>
 
           {/* Signup */}
+
           <div className="mt-6 text-center text-sm text-gray-500">
+
             Don't have an account?{" "}
+
             <Link
               to="/signup"
               className="font-semibold text-blue-600 hover:text-blue-700"
             >
               Create Account
             </Link>
+
           </div>
+
         </div>
+
       </div>
     </div>
   );

@@ -1088,7 +1088,6 @@ export interface PluginUsersPermissionsUser
   extends Struct.CollectionTypeSchema {
   collectionName: 'up_users';
   info: {
-    description: '';
     displayName: 'User';
     name: 'user';
     pluralName: 'users';
@@ -1096,7 +1095,6 @@ export interface PluginUsersPermissionsUser
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -1107,20 +1105,16 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.Private;
     email: Schema.Attribute.Email &
       Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        minLength: 6;
-      }>;
+      Schema.Attribute.Unique;
+    isOnline: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    lastLoginAt: Schema.Attribute.DateTime;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'plugin::users-permissions.user'
     > &
       Schema.Attribute.Private;
-    password: Schema.Attribute.Password &
-      Schema.Attribute.Private &
-      Schema.Attribute.SetMinMaxLength<{
-        minLength: 6;
-      }>;
+    password: Schema.Attribute.Password & Schema.Attribute.Private;
     provider: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;

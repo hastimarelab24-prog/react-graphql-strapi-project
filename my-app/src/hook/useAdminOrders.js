@@ -1,40 +1,19 @@
-import { gql } from "@apollo/client";
-import { useQuery } from "@apollo/client/react/hooks";
+import { useContext } from "react";
 
-export const GET_ALL_ORDERS = gql`
-  query GetAllOrders {
-    orders: adminOrders {
-      documentId
-      shippingAddress
-      city
-      state
-      amount
-      items
-      pin
-      orderId
-      email
-      paymentId
-      paymentStatus
-      orderStatus
-      createdAt
-      updatedAt
-    }
+import {
+  AdminOrdersContext,
+} from "../context/AdminOrder";
+
+const useAdminOrders = () => {
+  const context = useContext(AdminOrdersContext);
+
+  if (!context) {
+    throw new Error(
+      "useAdminOrders must be used inside AdminOrdersProvider"
+    );
   }
-`;
 
-export const useAdminOrders = () => {
-  const { data, loading, error, refetch } = useQuery(GET_ALL_ORDERS, {
-    fetchPolicy: "network-only",
-  });
-
-  const orders = data?.orders || [];
-
-  return {
-    orders,
-    loading,
-    error,
-    refetch,
-  };
+  return context;
 };
 
 export default useAdminOrders;

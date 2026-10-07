@@ -24,10 +24,14 @@ export const GET_ALL_ORDERS = gql`
 export const GET_ALL_USERS = gql`
   query GetAllUsers {
     usersPermissionsUsers {
+
       documentId
       username
       email
       confirmed
+      blocked
+      isOnline
+      lastLoginAt
       createdAt
     }
   }

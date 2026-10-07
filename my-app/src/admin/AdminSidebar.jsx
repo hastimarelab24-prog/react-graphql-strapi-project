@@ -24,6 +24,9 @@ const AdminSidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }
       name:"Category"
     },
     {
+      name:"stockmanegmanet"
+    },
+    {
       name: "Products",
       icon: <FiPackage />,
     },

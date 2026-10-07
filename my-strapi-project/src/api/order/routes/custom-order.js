@@ -1,29 +1,58 @@
-export default {
+"use strict";
+
+module.exports = {
   routes: [
+    // =====================================================
+    // GET ALL ORDERS
+    // =====================================================
     {
-      method: 'GET',
-      path: '/orders',
-      handler: 'order.find', // અથવા જો custom controller હોય તો તમારા controller નું નામ
+      method: "GET",
+      path: "/orders",
+      handler: "order.findOrders",
       config: {
-        policies: [],
-        middlewares: [],
-      },
-    },,{
-      method: "POST",
-      path: "/orders/create-payment-intent",
-      handler: "order.createPaymentIntent",
-      config: {
-        auth: false, // Disables default Strapi route guard so custom JWT logic works
+        auth: true,
         policies: [],
         middlewares: [],
       },
     },
+
+    // =====================================================
+    // GET SINGLE ORDER
+    // =====================================================
+    {
+      method: "GET",
+      path: "/orders/:documentId",
+      handler: "order.findOrder",
+      config: {
+        auth: true,
+        policies: [],
+        middlewares: [],
+      },
+    },
+
+    // =====================================================
+    // CREATE PAYMENT INTENT
+    // =====================================================
+    {
+      method: "POST",
+      path: "/orders/create-payment-intent",
+      handler: "order.createPaymentIntent",
+      config: {
+        auth: true,
+        policies: [],
+        middlewares: [],
+      },
+    },
+
+    // =====================================================
+    // CREATE ORDER
+    // =====================================================
     {
       method: "POST",
       path: "/orders/create-order",
       handler: "order.createOrder",
       config: {
-        auth: false,
+        auth: true,
         policies: [],
         middlewares: [],
       },

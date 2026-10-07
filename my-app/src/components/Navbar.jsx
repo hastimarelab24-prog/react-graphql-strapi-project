@@ -17,12 +17,61 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
 
-  const logout = () => {
+  // const logout = () => {
+  //   localStorage.removeItem("token");
+  //   window.dispatchEvent(new Event("authChange"));
+  //   setMobileMenuOpen(false);
+  //   navigate("/");
+  // };
+  
+  const logout = async () => {
+  const token = localStorage.getItem("token");
+
+  try {
+    if (token) {
+      const response = await fetch(
+        "http://localhost:1337/api/auth/update-logout-status",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      console.log(
+        "LOGOUT STATUS:",
+        response.status
+      );
+
+      console.log(
+        "LOGOUT RESPONSE:",
+        result
+      );
+    }
+  } catch (error) {
+    console.error(
+      "Logout activity update failed:",
+      error
+    );
+  } finally {
     localStorage.removeItem("token");
-    window.dispatchEvent(new Event("authChange"));
+    localStorage.removeItem("user");
+
+    window.dispatchEvent(
+      new Event("authChange")
+    );
+
     setMobileMenuOpen(false);
+
     navigate("/");
-  };
+  }
+};
+  
 
   useEffect(() => {
     const checkAuth = () => {

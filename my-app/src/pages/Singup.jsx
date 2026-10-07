@@ -270,13 +270,12 @@
 // }
 
 // export default Singup;
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:1337";
 
-function Singup() {
+function Signup() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -297,7 +296,6 @@ function Singup() {
       [name]: value,
     }));
 
-    // Remove old error when user starts typing again
     if (error) {
       setError("");
     }
@@ -313,9 +311,17 @@ function Singup() {
     const email = formData.email.trim().toLowerCase();
     const password = formData.password;
 
+    // -------------------------
     // Validation
+    // -------------------------
+
     if (!username) {
       setError("Please enter a username.");
+      return;
+    }
+
+    if (username.length < 3) {
+      setError("Username must be at least 3 characters.");
       return;
     }
 
@@ -363,6 +369,10 @@ function Singup() {
       console.log("REGISTER STATUS:", response.status);
       console.log("REGISTER RESPONSE:", result);
 
+      // -------------------------
+      // Registration error
+      // -------------------------
+
       if (!response.ok) {
         throw new Error(
           result?.error?.message ||
@@ -370,50 +380,105 @@ function Singup() {
         );
       }
 
+      // -------------------------
+      // Validate JWT
+      // -------------------------
+
       if (!result?.jwt || !result?.user) {
         throw new Error(
-          "Registration succeeded, but Strapi did not return a valid user or JWT."
+          "Registration succeeded, but Strapi did not return a valid JWT or user."
         );
       }
 
       console.log(
-        "REGISTER SUCCESS:",
+        "REGISTER SUCCESS USER:",
         result.user
       );
 
-      /*
-       * IMPORTANT:
-       *
-       * Strapi registration already returns JWT.
-       * So user is automatically logged in here.
-       */
+      // -------------------------
+      // IMPORTANT
+      // Save actual username
+      // -------------------------
 
-      localStorage.setItem("token", result.jwt);
+      const loggedInUser = {
+        ...result.user,
+        username:
+          result.user.username || username,
+        email:
+          result.user.email || email,
+      };
+
+      localStorage.setItem(
+        "token",
+        result.jwt
+      );
 
       localStorage.setItem(
         "user",
-        JSON.stringify(result.user)
+        JSON.stringify(loggedInUser)
       );
 
-      // Notify Navbar / Auth components
+      // -------------------------
+      // Update login status
+      // -------------------------
+
+      try {
+        const activityResponse = await fetch(
+          `${API_URL}/api/auth/update-login-status`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${result.jwt}`,
+            },
+          }
+        );
+
+        const activityResult =
+          await activityResponse.json();
+
+        console.log(
+          "Signup login activity status:",
+          activityResponse.status
+        );
+
+        console.log(
+          "Signup login activity response:",
+          activityResult
+        );
+      } catch (activityError) {
+        console.warn(
+          "Login activity update failed:",
+          activityError
+        );
+      }
+
+      // -------------------------
+      // Notify application
+      // -------------------------
+
       window.dispatchEvent(
         new Event("authChange")
       );
 
       setSuccess(
-        "Account created successfully!"
+        "Account created successfully! You are now logged in."
       );
 
-      /*
-       * Go to home page after successful signup.
-       */
+      // -------------------------
+      // Go Home
+      // -------------------------
+
       setTimeout(() => {
         navigate("/", {
           replace: true,
         });
       }, 500);
     } catch (err) {
-      console.error("Signup error:", err);
+      console.error(
+        "Signup error:",
+        err
+      );
 
       setError(
         err?.message ||
@@ -427,10 +492,10 @@ function Singup() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
       <div className="w-full max-w-md">
-        {/* Card */}
         <div className="rounded-2xl bg-white p-8 shadow-lg">
 
           {/* Heading */}
+
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-gray-900">
               Create Account
@@ -442,6 +507,7 @@ function Singup() {
           </div>
 
           {/* Error */}
+
           {error && (
             <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
               {error}
@@ -449,6 +515,7 @@ function Singup() {
           )}
 
           {/* Success */}
+
           {success && (
             <div className="mb-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600">
               {success}
@@ -456,11 +523,13 @@ function Singup() {
           )}
 
           {/* Form */}
+
           <form
             onSubmit={handleSubmit}
             className="space-y-5"
           >
             {/* Username */}
+
             <div>
               <label
                 htmlFor="username"
@@ -484,6 +553,7 @@ function Singup() {
             </div>
 
             {/* Email */}
+
             <div>
               <label
                 htmlFor="email"
@@ -507,6 +577,7 @@ function Singup() {
             </div>
 
             {/* Password */}
+
             <div>
               <label
                 htmlFor="password"
@@ -529,7 +600,8 @@ function Singup() {
               />
             </div>
 
-            {/* Signup Button */}
+            {/* Button */}
+
             <button
               type="submit"
               disabled={loading}
@@ -541,14 +613,17 @@ function Singup() {
             </button>
           </form>
 
-          {/* Login Link */}
+          {/* Login */}
+
           <div className="mt-6 border-t border-gray-100 pt-6 text-center">
             <p className="text-sm text-gray-500">
               Already have an account?{" "}
 
               <button
                 type="button"
-                onClick={() => navigate("/login")}
+                onClick={() =>
+                  navigate("/login")
+                }
                 className="font-semibold text-black transition hover:text-yellow-500"
               >
                 Login
@@ -561,5 +636,4 @@ function Singup() {
   );
 }
 
-export default Singup;
-
+export default Signup;

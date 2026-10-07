@@ -1,19 +1,34 @@
-module.exports = [
-  'strapi::logger',
-  'strapi::errors',
-  'strapi::security',
+export default [
+  "strapi::logger",
+
+  "strapi::errors",
+
+  "strapi::security",
+
   {
-    name: 'strapi::cors',
+    name: "strapi::cors",
+
     config: {
       enabled: true,
-      headers: '*',
-      origin: ['http://localhost:3000', 'http://localhost:5173'], // Add your React URL here
+
+      origin: [
+        "http://localhost:3000",
+        "http://localhost:5173",
+      ],
+
+      headers: "*",
     },
   },
-  'strapi::poweredBy',
-  'strapi::query',
-  'strapi::body',
-  'strapi::session',
-  'strapi::favicon',
-  'strapi::public',
+
+  "strapi::poweredBy",
+
+  "strapi::query",
+
+  "strapi::body",
+
+  "strapi::session",
+
+  "strapi::favicon",
+
+  "strapi::public",
 ];

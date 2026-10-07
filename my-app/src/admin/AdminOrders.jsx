@@ -351,77 +351,46 @@
 //   );
 // };
 
-// export default AdminOrders;
+// export default AdminOrders
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   FiShoppingBag,
   FiXCircle,
   FiRefreshCw,
   FiMapPin,
-  FiCreditCard,
 } from "react-icons/fi";
 
-const API_URL = "http://localhost:1337";
+import AdminOrdersProvider from "../context/AdminOrder";
+import useAdminOrders from "../hook/useAdminOrders";
 
-const AdminOrders = () => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+const AdminOrdersContent = () => {
+  const {
+    orders,
+    loading,
+    error,
+    fetchOrders,
+    totalOrders,
+  } = useAdminOrders();
 
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      setError("");
-
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        throw new Error("Admin authentication token not found.");
-      }
-
-      const response = await fetch(
-        `${API_URL}/api/orders?sort=createdAt:desc&pagination[pageSize]=100`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          result?.error?.message || "Failed to fetch orders"
-        );
-      }
-
-      setOrders(result?.data || []);
-    } catch (err) {
-      console.error("Fetch orders error:", err);
-      setError(err.message || "Failed to load orders");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
+  // Format date
   const formatDate = (date) => {
     if (!date) return "N/A";
 
-    return new Date(date).toLocaleDateString("en-IN", {
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "N/A";
+    }
+
+    return parsedDate.toLocaleDateString("en-IN", {
       day: "2-digit",
       month: "short",
       year: "numeric",
     });
   };
 
+  // Format amount
   const formatAmount = (amount) => {
     if (amount === undefined || amount === null) {
       return "₹0";
@@ -430,10 +399,13 @@ const AdminOrders = () => {
     return `₹${Number(amount).toLocaleString("en-IN")}`;
   };
 
+  // Payment status styling
   const getPaymentStatusClass = (status) => {
     const value = String(status || "").toLowerCase();
 
-    if (value === "paid" || value === "success" || value === "successful") {
+    if (
+      ["paid", "success", "successful"].includes(value)
+    ) {
       return "bg-green-100 text-green-700";
     }
 
@@ -442,9 +414,7 @@ const AdminOrders = () => {
     }
 
     if (
-      value === "failed" ||
-      value === "cancelled" ||
-      value === "canceled"
+      ["failed", "cancelled", "canceled"].includes(value)
     ) {
       return "bg-red-100 text-red-700";
     }
@@ -452,22 +422,21 @@ const AdminOrders = () => {
     return "bg-gray-100 text-gray-700";
   };
 
+  // Order status styling
   const getOrderStatusClass = (status) => {
     const value = String(status || "").toLowerCase();
 
-    if (value === "delivered" || value === "completed") {
+    if (["delivered", "completed"].includes(value)) {
       return "bg-green-100 text-green-700";
     }
 
     if (
-      value === "pending" ||
-      value === "processing" ||
-      value === "confirmed"
+      ["pending", "processing", "confirmed"].includes(value)
     ) {
       return "bg-yellow-100 text-yellow-700";
     }
 
-    if (value === "cancelled" || value === "canceled") {
+    if (["cancelled", "canceled"].includes(value)) {
       return "bg-red-100 text-red-700";
     }
 
@@ -478,22 +447,31 @@ const AdminOrders = () => {
     return "bg-gray-100 text-gray-700";
   };
 
-  const getOrderId = (order) => {
-    return (
-      order?.orderId ||
-      order?.attributes?.orderId ||
-      order?.documentId ||
-      order?.id ||
-      "N/A"
-    );
-  };
+  // Get order items
+  const getItems = (order) => {
+    if (!order?.items) {
+      return [];
+    }
 
-  const getField = (order, field) => {
-    return order?.[field] ?? order?.attributes?.[field];
+    if (Array.isArray(order.items)) {
+      return order.items;
+    }
+
+    if (typeof order.items === "string") {
+      try {
+        const parsed = JSON.parse(order.items);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    return [];
   };
 
   return (
     <div className="space-y-6">
+
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -511,12 +489,14 @@ const AdminOrders = () => {
           disabled={loading}
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <FiRefreshCw className={loading ? "animate-spin" : ""} />
+          <FiRefreshCw
+            className={loading ? "animate-spin" : ""}
+          />
           Refresh
         </button>
       </div>
 
-      {/* Order Count */}
+      {/* Total Orders */}
       {!loading && !error && (
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100">
@@ -524,9 +504,12 @@ const AdminOrders = () => {
           </div>
 
           <div>
-            <p className="text-sm text-gray-500">Total Orders</p>
+            <p className="text-sm text-gray-500">
+              Total Orders
+            </p>
+
             <p className="text-xl font-bold text-gray-800">
-              {orders.length}
+              {totalOrders}
             </p>
           </div>
         </div>
@@ -534,6 +517,7 @@ const AdminOrders = () => {
 
       {/* Main Card */}
       <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+
         {/* Loading */}
         {loading && (
           <div className="p-10 text-center">
@@ -591,122 +575,49 @@ const AdminOrders = () => {
         {/* Orders Table */}
         {!loading && !error && orders.length > 0 && (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1400px] text-left">
+            <table className="w-full min-w-[1600px] text-left">
+
               <thead>
                 <tr className="border-b bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  <th className="px-6 py-4">Index</th>
-
-                  <th className="px-6 py-4">
-                    Order ID
-                  </th>
-
-                  <th className="px-6 py-4">
-                    Customer
-                  </th>
-
-                  <th className="px-6 py-4">
-                    Email
-                  </th>
-
-                  <th className="px-6 py-4">
-                    Amount
-                  </th>
-
-                  <th className="px-6 py-4">
-                    Payment
-                  </th>
-
-                  <th className="px-6 py-4">
-                    Order Status
-                  </th>
-
-                  <th className="px-6 py-4">
-                    Shipping Address
-                  </th>
-
-                  <th className="px-6 py-4">
-                    City
-                  </th>
-
-                  <th className="px-6 py-4">
-                    State
-                  </th>
-
-                  <th className="px-6 py-4">
-                    PIN
-                  </th>
-
-                  <th className="px-6 py-4">
-                    Date
-                  </th>
+                  <th className="px-6 py-4">#</th>
+                  <th className="px-6 py-4">Order ID</th>
+                  <th className="px-6 py-4">Customer</th>
+                  <th className="px-6 py-4">Email</th>
+                  <th className="px-6 py-4">Amount</th>
+                  <th className="px-6 py-4">Payment</th>
+                  <th className="px-6 py-4">Order Status</th>
+                  <th className="px-6 py-4">Shipping Address</th>
+                  <th className="px-6 py-4">City</th>
+                  <th className="px-6 py-4">State</th>
+                  <th className="px-6 py-4">PIN</th>
+                  <th className="px-6 py-4">Items</th>
+                  <th className="px-6 py-4">Date</th>
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-gray-100">
                 {orders.map((order, index) => {
-                  const orderId = getOrderId(order);
+                  const user = order?.user;
 
-                  const email = getField(
-                    order,
-                    "email"
-                  );
-
-                  const amount = getField(
-                    order,
-                    "amount"
-                  );
-
-                  const paymentStatus = getField(
-                    order,
-                    "paymentStatus"
-                  );
-
-                  const orderStatus = getField(
-                    order,
-                    "orderStatus"
-                  );
-
-                  const shippingAddress = getField(
-                    order,
-                    "shippingAddress"
-                  );
-
-                  const city = getField(
-                    order,
-                    "city"
-                  );
-
-                  const state = getField(
-                    order,
-                    "state"
-                  );
-
-                  const pin = getField(
-                    order,
-                    "pin"
-                  );
-
-                  const createdAt = getField(
-                    order,
-                    "createdAt"
-                  );
-
-                  const user = getField(
-                    order,
-                    "user"
-                  );
-
-                  const username =
+                  const customerName =
                     user?.username ||
-                    user?.data?.attributes?.username ||
-                    user?.data?.username ||
-                    "-";
+                    user?.email ||
+                    order?.email ||
+                    "Guest";
+
+                  const email =
+                    order?.email ||
+                    user?.email ||
+                    "N/A";
+
+                  const items = getItems(order);
 
                   return (
                     <tr
                       key={
-                        order.documentId ||
-                        order.id ||
+                        order?.documentId ||
+                        order?.id ||
+                        order?.orderId ||
                         index
                       }
                       className="transition hover:bg-gray-50"
@@ -719,33 +630,35 @@ const AdminOrders = () => {
                       {/* Order ID */}
                       <td className="px-6 py-5">
                         <span className="font-semibold text-gray-800">
-                          {orderId}
+                          {order?.orderId ||
+                            order?.documentId ||
+                            "N/A"}
                         </span>
                       </td>
 
                       {/* Customer */}
                       <td className="px-6 py-5 text-sm font-medium text-gray-800">
-                        {username}
+                        {customerName}
                       </td>
 
                       {/* Email */}
                       <td className="px-6 py-5 text-sm text-gray-600">
-                        {email || "N/A"}
+                        {email}
                       </td>
 
                       {/* Amount */}
                       <td className="px-6 py-5 text-sm font-semibold text-gray-800">
-                        {formatAmount(amount)}
+                        {formatAmount(order?.amount)}
                       </td>
 
-                      {/* Payment */}
+                      {/* Payment Status */}
                       <td className="px-6 py-5">
                         <span
                           className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getPaymentStatusClass(
-                            paymentStatus
+                            order?.paymentStatus
                           )}`}
                         >
-                          {paymentStatus || "N/A"}
+                          {order?.paymentStatus || "N/A"}
                         </span>
                       </td>
 
@@ -753,52 +666,71 @@ const AdminOrders = () => {
                       <td className="px-6 py-5">
                         <span
                           className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getOrderStatusClass(
-                            orderStatus
+                            order?.orderStatus
                           )}`}
                         >
-                          {orderStatus || "N/A"}
+                          {order?.orderStatus || "N/A"}
                         </span>
                       </td>
 
                       {/* Shipping Address */}
-                      <td className="max-w-[250px] px-6 py-5 text-sm text-gray-600">
+                      <td className="max-w-[280px] px-6 py-5 text-sm text-gray-600">
                         <div className="flex items-start gap-2">
                           <FiMapPin className="mt-0.5 shrink-0 text-gray-400" />
 
                           <span className="line-clamp-2">
-                            {shippingAddress || "N/A"}
+                            {order?.shippingAddress || "N/A"}
                           </span>
                         </div>
                       </td>
 
                       {/* City */}
                       <td className="px-6 py-5 text-sm text-gray-600">
-                        {city || "N/A"}
+                        {order?.city || "N/A"}
                       </td>
 
                       {/* State */}
                       <td className="px-6 py-5 text-sm text-gray-600">
-                        {state || "N/A"}
+                        {order?.state || "N/A"}
                       </td>
 
                       {/* PIN */}
                       <td className="px-6 py-5 text-sm text-gray-600">
-                        {pin || "N/A"}
+                        {order?.pin ?? "N/A"}
+                      </td>
+
+                      {/* Items */}
+                      <td className="px-6 py-5 text-sm text-gray-600">
+                        {items.length > 0
+                          ? `${items.length} item${
+                              items.length > 1 ? "s" : ""
+                            }`
+                          : "N/A"}
                       </td>
 
                       {/* Date */}
                       <td className="px-6 py-5 text-sm text-gray-500">
-                        {formatDate(createdAt)}
+                        {formatDate(order?.createdAt)}
                       </td>
                     </tr>
                   );
                 })}
               </tbody>
+
             </table>
           </div>
         )}
       </div>
     </div>
+  );
+};
+
+// Provider wrapper
+const AdminOrders = () => {
+  return (
+    <AdminOrdersProvider>
+      <AdminOrdersContent />
+    </AdminOrdersProvider>
   );
 };
 
