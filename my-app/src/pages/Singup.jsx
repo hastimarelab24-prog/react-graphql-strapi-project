@@ -369,10 +369,10 @@ function Signup() {
       console.log("REGISTER STATUS:", response.status);
       console.log("REGISTER RESPONSE:", result);
 
-      // -------------------------
-      // Registration error
-      // -------------------------
 
+      // Registration error
+
+      
       if (!response.ok) {
         throw new Error(
           result?.error?.message ||
@@ -380,10 +380,10 @@ function Signup() {
         );
       }
 
-      // -------------------------
-      // Validate JWT
-      // -------------------------
 
+      // Validate JWT
+
+      
       if (!result?.jwt || !result?.user) {
         throw new Error(
           "Registration succeeded, but Strapi did not return a valid JWT or user."
@@ -395,11 +395,11 @@ function Signup() {
         result.user
       );
 
-      // -------------------------
+
       // IMPORTANT
       // Save actual username
-      // -------------------------
 
+      
       const loggedInUser = {
         ...result.user,
         username:
@@ -418,10 +418,10 @@ function Signup() {
         JSON.stringify(loggedInUser)
       );
 
-      // -------------------------
-      // Update login status
-      // -------------------------
 
+      // Update login status
+
+      
       try {
         const activityResponse = await fetch(
           `${API_URL}/api/auth/update-login-status`,
@@ -453,10 +453,10 @@ function Signup() {
         );
       }
 
-      // -------------------------
-      // Notify application
-      // -------------------------
 
+      // Notify application
+
+      
       window.dispatchEvent(
         new Event("authChange")
       );
@@ -465,10 +465,10 @@ function Signup() {
         "Account created successfully! You are now logged in."
       );
 
-      // -------------------------
-      // Go Home
-      // -------------------------
 
+      // Go Home
+
+      
       setTimeout(() => {
         navigate("/", {
           replace: true,

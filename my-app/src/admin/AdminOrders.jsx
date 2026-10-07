@@ -1,357 +1,3 @@
-// import React from "react";
-// import { gql } from "@apollo/client";
-// import { useQuery } from "@apollo/client/react";
-// import {
-//   FiShoppingBag,
-//   FiRefreshCw,
-//   FiXCircle,
-//   FiMapPin,
-//   FiMail,
-//   FiEye,
-// } from "react-icons/fi";
-
-// export const GET_ALL_ORDERS = gql`
-//   query GetAllOrders {
-//     orders {
-//       documentId
-//       shippingAddress
-//       city
-//       state
-//       amount
-//       items
-//       pin
-//       orderId
-//       email
-//       paymentId
-//       paymentStatus
-//       orderStatus
-//       createdAt
-//       updatedAt
-//     }
-//   }
-// `;
-
-// const AdminOrders = () => {
-//   const { data, loading, error, refetch } = useQuery(GET_ALL_ORDERS, {
-//     fetchPolicy: "network-only",
-//   });
-
-//   const orders = data?.orders || [];
-
-//   // format amount
-//   const formatAmount = (amount) => {
-//     if (amount === null || amount === undefined) {
-//       return "0";
-//     }
-//     return `${Number(amount).toLocaleString("en-IN")}`;
-//   };
-
-//   // format date
-//   const formatDate = (dateStr) => {
-//     if (!dateStr) {
-//       return "N/A";
-//     }
-//     return new Date(dateStr).toLocaleDateString("en-IN", {
-//       day: "2-digit",
-//       month: "short",
-//       year: "numeric",
-//     });
-//   };
-
-//   // payment status
-//   const getPaymentStatusClass = (status) => {
-//     if (!status) {
-//       return "bg-gray-100 text-gray-600";
-//     }
-//     const val = status.toLowerCase();
-//     if (val === "paid") {
-//       return "bg-green-100 text-green-700";
-//     }
-//     if (val === "pending") {
-//       return "bg-yellow-100 text-yellow-700";
-//     }
-//     if (val === "failed") {
-//       return "bg-red-100 text-red-700";
-//     }
-//     return "bg-gray-100 text-gray-600";
-//   };
-
-//   // orders status
-//   const getOrdersStatusClass = (status) => {
-//     if (!status) {
-//       return "bg-gray-100 text-gray-600";
-//     }
-//     const value = status.toLowerCase();
-//     if (value === "delivered" || value === "completed") {
-//       return "bg-green-100 text-green-700";
-//     }
-//     if (value === "pending" || value === "processing") {
-//       return "bg-yellow-100 text-yellow-700";
-//     }
-//     if (value === "cancelled" || value === "canceled") {
-//       return "bg-red-100 text-red-700";
-//     }
-//     return "bg-blue-100 text-blue-700";
-//   };
-
-//   // view order
-//   const handleViewOrder = (order) => {
-//     const itemText = Array.isArray(order.items)
-//       ? order.items
-//           .map((item) => `${item.name || "Product"} x ${item.qty || 1}`)
-//           .join("\n")
-//       : "No items";
-
-//     alert(
-//       `Order Details\n\n` +
-//         `Order ID: ${order.orderId || "N/A"}\n` +
-//         `Email: ${order.email || "N/A"}\n` +
-//         `Amount: ₹${formatAmount(order.amount)}\n` +
-//         `Shipping Address: ${order.shippingAddress || "N/A"}\n` +
-//         `City: ${order.city || "N/A"}\n` +
-//         `State: ${order.state || "N/A"}\n` +
-//         `PIN: ${order.pin || "N/A"}\n` +
-//         `Payment Status: ${order.paymentStatus || "N/A"}\n` +
-//         `Order Status: ${order.orderStatus || "N/A"}\n\n` +
-//         `Items:\n${itemText}`
-//     );
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-//       {/* PAGE HEADER */}
-//       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-//         <div>
-//           <h1 className="text-2xl font-bold text-gray-800">Orders</h1>
-//           <p className="mt-1 text-sm text-gray-500">
-//             All orders placed on your website
-//           </p>
-//         </div>
-
-//         <div className="flex items-center gap-3">
-//           {/* TOTAL ORDERS */}
-//           <div className="rounded-xl border border-gray-100 bg-white px-5 py-3 shadow-sm">
-//             <p className="text-xs text-gray-500">Total Orders</p>
-//             <p className="text-xl font-bold text-gray-800">{orders.length}</p>
-//           </div>
-
-//           {/* REFRESH BUTTON */}
-//           <button
-//             onClick={() => refetch()}
-//             disabled={loading}
-//             className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
-//           >
-//             <FiRefreshCw
-//               size={17}
-//               className={loading ? "animate-spin" : ""}
-//             />
-//             Refresh
-//           </button>
-//         </div>
-//       </div>
-
-//       {/* LOADING STATE */}
-//       {loading && (
-//         <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-sm">
-//           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600" />
-//           <p className="mt-4 text-sm text-gray-500">Loading orders...</p>
-//         </div>
-//       )}
-
-//       {/* ERROR STATE */}
-//       {error && (
-//         <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
-//           <div className="flex items-start gap-3">
-//             <FiXCircle size={24} className="mt-0.5 text-red-500" />
-//             <div className="min-w-0">
-//               <h2 className="font-semibold text-red-700">
-//                 Unable to load orders
-//               </h2>
-//               <p className="mt-2 break-all text-sm text-red-600">
-//                 {error.message}
-//               </p>
-//               <button
-//                 onClick={() => refetch()}
-//                 className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-//               >
-//                 Try Again
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-
-//       {/* ORDERS TABLE */}
-//       {!loading && !error && orders.length > 0 && (
-//         <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-//           {/* TABLE HEADER */}
-//           <div className="border-b border-gray-100 px-6 py-5">
-//             <div className="flex items-center gap-3">
-//               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100">
-//                 <FiShoppingBag size={22} className="text-blue-600" />
-//               </div>
-//               <div>
-//                 <h2 className="text-lg font-semibold text-gray-800">
-//                   All Orders
-//                 </h2>
-//                 <p className="text-sm text-gray-500">
-//                   Orders fetched from Strapi
-//                 </p>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* TABLE CONTENT */}
-//           <div className="overflow-x-auto">
-//             <table className="w-full min-w-[1200px]">
-//               <thead>
-//                 <tr className="border-b bg-gray-50">
-//                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-//                     Order
-//                   </th>
-//                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-//                     Customer
-//                   </th>
-//                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-//                     Address
-//                   </th>
-//                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-//                     Amount
-//                   </th>
-//                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-//                     Payment
-//                   </th>
-//                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-//                     Order Status
-//                   </th>
-//                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-//                     Date
-//                   </th>
-//                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-//                     Action
-//                   </th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {orders.map((order) => (
-//                   <tr
-//                     key={order.documentId}
-//                     className="border-b last:border-0 hover:bg-gray-50"
-//                   >
-//                     {/* ORDER ID */}
-//                     <td className="px-6 py-5">
-//                       <p className="font-semibold text-blue-600">
-//                         {order.orderId || "N/A"}
-//                       </p>
-//                       <p className="mt-1 text-xs text-gray-400">
-//                         {order.documentId}
-//                       </p>
-//                     </td>
-
-//                     {/* CUSTOMER */}
-//                     <td className="px-6 py-5">
-//                       <div className="flex items-center gap-2">
-//                         <FiMail size={16} className="text-gray-400" />
-//                         <span className="text-sm text-gray-700">
-//                           {order.email || "N/A"}
-//                         </span>
-//                       </div>
-//                     </td>
-
-//                     {/* ADDRESS */}
-//                     <td className="px-6 py-5">
-//                       <div className="max-w-[280px]">
-//                         <div className="flex items-start gap-2">
-//                           <FiMapPin
-//                             size={17}
-//                             className="mt-0.5 shrink-0 text-gray-400"
-//                           />
-//                           <div>
-//                             <p className="text-sm text-gray-700">
-//                               {order.shippingAddress || "N/A"}
-//                             </p>
-//                             <p className="mt-1 text-xs text-gray-500">
-//                               {order.city || "N/A"}, {order.state || "N/A"} -{" "}
-//                               {order.pin || "N/A"}
-//                             </p>
-//                           </div>
-//                         </div>
-//                       </div>
-//                     </td>
-
-//                     {/* AMOUNT */}
-//                     <td className="px-6 py-5">
-//                       <p className="font-semibold text-gray-800">
-//                         ₹{formatAmount(order.amount)}
-//                       </p>
-//                     </td>
-
-//                     {/* PAYMENT STATUS */}
-//                     <td className="px-6 py-5">
-//                       <span
-//                         className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getPaymentStatusClass(
-//                           order.paymentStatus
-//                         )}`}
-//                       >
-//                         {order.paymentStatus || "N/A"}
-//                       </span>
-//                     </td>
-
-//                     {/* ORDER STATUS */}
-//                     <td className="px-6 py-5">
-//                       <span
-//                         className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getOrdersStatusClass(
-//                           order.orderStatus
-//                         )}`}
-//                       >
-//                         {order.orderStatus || "Pending"}
-//                       </span>
-//                     </td>
-
-//                     {/* DATE */}
-//                     <td className="px-6 py-5">
-//                       <span className="text-sm text-gray-500">
-//                         {formatDate(order.createdAt)}
-//                       </span>
-//                     </td>
-
-//                     {/* ACTION */}
-//                     <td className="px-6 py-5">
-//                       <button
-//                         onClick={() => handleViewOrder(order)}
-//                         className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100"
-//                       >
-//                         <FiEye size={16} />
-//                         View
-//                       </button>
-//                     </td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
-//           </div>
-//         </div>
-//       )}
-
-//       {/* NO ORDERS FOUND */}
-//       {!loading && !error && orders.length === 0 && (
-//         <div className="rounded-2xl border border-gray-100 bg-white p-16 text-center shadow-sm">
-//           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-//             <FiShoppingBag size={30} className="text-gray-400" />
-//           </div>
-//           <h2 className="mt-5 text-lg font-semibold text-gray-800">
-//             No Orders Found
-//           </h2>
-//           <p className="mt-2 text-sm text-gray-500">
-//             When customers place orders, they will appear here.
-//           </p>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default AdminOrders
 
 import React from "react";
 import {
@@ -359,6 +5,12 @@ import {
   FiXCircle,
   FiRefreshCw,
   FiMapPin,
+  FiMail,
+  FiUser,
+  FiCreditCard,
+  FiPackage,
+  FiCalendar,
+  FiHash,
 } from "react-icons/fi";
 
 import AdminOrdersProvider from "../context/AdminOrder";
@@ -373,7 +25,7 @@ const AdminOrdersContent = () => {
     totalOrders,
   } = useAdminOrders();
 
-  // Format date
+  // FORMAT DATE
   const formatDate = (date) => {
     if (!date) return "N/A";
 
@@ -390,7 +42,7 @@ const AdminOrdersContent = () => {
     });
   };
 
-  // Format amount
+  // FORMAT AMOUNT
   const formatAmount = (amount) => {
     if (amount === undefined || amount === null) {
       return "₹0";
@@ -399,13 +51,11 @@ const AdminOrdersContent = () => {
     return `₹${Number(amount).toLocaleString("en-IN")}`;
   };
 
-  // Payment status styling
+  // PAYMENT STATUS CLASS
   const getPaymentStatusClass = (status) => {
     const value = String(status || "").toLowerCase();
 
-    if (
-      ["paid", "success", "successful"].includes(value)
-    ) {
+    if (["paid", "success", "successful"].includes(value)) {
       return "bg-green-100 text-green-700";
     }
 
@@ -413,16 +63,14 @@ const AdminOrdersContent = () => {
       return "bg-yellow-100 text-yellow-700";
     }
 
-    if (
-      ["failed", "cancelled", "canceled"].includes(value)
-    ) {
+    if (["failed", "cancelled", "canceled"].includes(value)) {
       return "bg-red-100 text-red-700";
     }
 
     return "bg-gray-100 text-gray-700";
   };
 
-  // Order status styling
+  // ORDER STATUS CLASS
   const getOrderStatusClass = (status) => {
     const value = String(status || "").toLowerCase();
 
@@ -447,7 +95,7 @@ const AdminOrdersContent = () => {
     return "bg-gray-100 text-gray-700";
   };
 
-  // Get order items
+  // GET ORDER ITEMS
   const getItems = (order) => {
     if (!order?.items) {
       return [];
@@ -460,6 +108,7 @@ const AdminOrdersContent = () => {
     if (typeof order.items === "string") {
       try {
         const parsed = JSON.parse(order.items);
+
         return Array.isArray(parsed) ? parsed : [];
       } catch {
         return [];
@@ -469,13 +118,263 @@ const AdminOrdersContent = () => {
     return [];
   };
 
-  return (
-    <div className="space-y-6">
+  // CUSTOMER NAME
+  const getCustomerName = (order) => {
+    const user = order?.user;
 
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">
+    return (
+      user?.username ||
+      user?.email ||
+      order?.email ||
+      "Guest"
+    );
+  };
+
+  // CUSTOMER EMAIL
+  const getCustomerEmail = (order) => {
+    const user = order?.user;
+
+    return (
+      order?.email ||
+      user?.email ||
+      "N/A"
+    );
+  };
+
+  // ORDER CONTENT
+  const renderOrderDetails = (order, index) => {
+    const items = getItems(order);
+
+    const customerName = getCustomerName(order);
+    const customerEmail = getCustomerEmail(order);
+
+    return (
+      <div
+        key={
+          order?.documentId ||
+          order?.id ||
+          order?.orderId ||
+          index
+        }
+        className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:p-5"
+      >
+        {/* CARD HEADER */}
+        <div className="flex flex-col gap-3 border-b border-gray-100 pb-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100">
+              <FiShoppingBag className="text-xl text-blue-600" />
+            </div>
+
+            <div className="min-w-0">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                Order #{index + 1}
+              </p>
+
+              <p className="mt-1 break-all text-sm font-bold text-gray-800">
+                {order?.orderId ||
+                  order?.documentId ||
+                  "N/A"}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <span
+              className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold ${getPaymentStatusClass(
+                order?.paymentStatus
+              )}`}
+            >
+              Payment: {order?.paymentStatus || "N/A"}
+            </span>
+
+            <span
+              className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold ${getOrderStatusClass(
+                order?.orderStatus
+              )}`}
+            >
+              {order?.orderStatus || "N/A"}
+            </span>
+          </div>
+        </div>
+
+        {/* CUSTOMER + AMOUNT */}
+        <div className="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* CUSTOMER */}
+          <div className="min-w-0">
+            <div className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
+              <FiUser size={14} />
+              Customer
+            </div>
+
+            <p className="truncate text-sm font-semibold text-gray-800">
+              {customerName}
+            </p>
+          </div>
+
+          {/* EMAIL */}
+          <div className="min-w-0">
+            <div className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
+              <FiMail size={14} />
+              Email
+            </div>
+
+            <p className="break-all text-sm text-gray-600">
+              {customerEmail}
+            </p>
+          </div>
+
+          {/* AMOUNT */}
+          <div>
+            <div className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
+              <FiCreditCard size={14} />
+              Amount
+            </div>
+
+            <p className="text-base font-bold text-gray-800">
+              {formatAmount(order?.amount)}
+            </p>
+          </div>
+
+          {/* DATE */}
+          <div>
+            <div className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
+              <FiCalendar size={14} />
+              Date
+            </div>
+
+            <p className="text-sm text-gray-600">
+              {formatDate(order?.createdAt)}
+            </p>
+          </div>
+        </div>
+
+        {/* SHIPPING ADDRESS */}
+        <div className="rounded-xl bg-gray-50 p-4">
+          <div className="mb-2 flex items-center gap-2">
+            <FiMapPin className="text-blue-500" />
+
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              Shipping Address
+            </p>
+          </div>
+
+          <p className="break-words text-sm text-gray-700">
+            {order?.shippingAddress || "N/A"}
+          </p>
+
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+            <span>
+              City:{" "}
+              <span className="font-medium text-gray-700">
+                {order?.city || "N/A"}
+              </span>
+            </span>
+
+            <span>
+              State:{" "}
+              <span className="font-medium text-gray-700">
+                {order?.state || "N/A"}
+              </span>
+            </span>
+
+            <span>
+              PIN:{" "}
+              <span className="font-medium text-gray-700">
+                {order?.pin ?? "N/A"}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        {/* ITEMS */}
+        <div className="mt-4">
+          <div className="mb-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FiPackage className="text-blue-500" />
+
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Order Items
+              </p>
+            </div>
+
+            <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-600">
+              {items.length}{" "}
+              {items.length === 1 ? "Item" : "Items"}
+            </span>
+          </div>
+
+          {items.length > 0 ? (
+            <div className="space-y-2">
+              {items.map((item, itemIndex) => (
+                <div
+                  key={itemIndex}
+                  className="flex flex-col gap-2 rounded-lg border border-gray-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0">
+                    <p className="break-words text-sm font-medium text-gray-800">
+                      {item?.name || "Product"}
+                    </p>
+
+                    {item?.documentId && (
+                      <p className="mt-0.5 break-all text-xs text-gray-400">
+                        ID: {item.documentId}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex shrink-0 items-center gap-4 text-xs text-gray-500">
+                    <span>
+                      Qty:{" "}
+                      <span className="font-semibold text-gray-700">
+                        {item?.qty || item?.quantity || 1}
+                      </span>
+                    </span>
+
+                    {item?.price !== undefined &&
+                      item?.price !== null && (
+                        <span className="font-semibold text-gray-700">
+                          ₹
+                          {Number(item.price).toLocaleString(
+                            "en-IN"
+                          )}
+                        </span>
+                      )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-lg border border-dashed border-gray-200 p-4 text-center text-sm text-gray-400">
+              No item details available
+            </div>
+          )}
+        </div>
+
+        {/* PAYMENT ID */}
+        {order?.paymentId && (
+          <div className="mt-4 flex flex-col gap-1 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <span className="flex items-center gap-2 text-xs font-medium text-gray-400">
+              <FiHash size={14} />
+              Payment ID
+            </span>
+
+            <span className="break-all text-xs text-gray-500 sm:text-right">
+              {order.paymentId}
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="w-full space-y-5 sm:space-y-6">
+      {/*           PAGE HEADER
+       */}
+
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-xl font-bold text-gray-800 sm:text-2xl">
             Orders Management
           </h1>
 
@@ -487,245 +386,286 @@ const AdminOrdersContent = () => {
         <button
           onClick={fetchOrders}
           disabled={loading}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
           <FiRefreshCw
+            size={17}
             className={loading ? "animate-spin" : ""}
           />
-          Refresh
+
+          {loading ? "Refreshing..." : "Refresh"}
         </button>
       </div>
 
-      {/* Total Orders */}
+      {/*           TOTAL ORDERS
+       */}
+
       {!loading && !error && (
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100">
-            <FiShoppingBag className="text-xl text-blue-600" />
-          </div>
+        <div className="w-full rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:w-fit sm:min-w-[220px] sm:p-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100">
+              <FiShoppingBag className="text-xl text-blue-600" />
+            </div>
 
-          <div>
-            <p className="text-sm text-gray-500">
-              Total Orders
-            </p>
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                Total Orders
+              </p>
 
-            <p className="text-xl font-bold text-gray-800">
-              {totalOrders}
-            </p>
+              <p className="mt-0.5 text-xl font-bold text-gray-800">
+                {totalOrders}
+              </p>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Main Card */}
-      <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+      {/*           MAIN CONTAINER
+       */}
 
-        {/* Loading */}
+      <div className="w-full overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        {/*             LOADING
+         */}
+
         {loading && (
-          <div className="p-10 text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600" />
+          <div className="p-8 text-center sm:p-12">
+            <div className="mx-auto h-9 w-9 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600" />
 
-            <p className="mt-3 text-sm text-gray-500">
+            <p className="mt-4 text-sm text-gray-500">
               Loading orders...
             </p>
           </div>
         )}
 
-        {/* Error */}
+        {/*             ERROR
+         */}
+
         {!loading && error && (
-          <div className="p-10 text-center">
+          <div className="p-6 text-center sm:p-10">
             <FiXCircle
-              size={40}
+              size={42}
               className="mx-auto text-red-500"
             />
 
-            <p className="mt-3 font-semibold text-red-500">
+            <p className="mt-4 font-semibold text-red-500">
               Failed to load orders
             </p>
 
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mx-auto mt-2 max-w-xl break-words text-xs text-gray-400">
               {error}
             </p>
 
             <button
               onClick={fetchOrders}
-              className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              className="mt-5 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
             >
+              <FiRefreshCw size={15} />
               Try Again
             </button>
           </div>
         )}
 
-        {/* No Orders */}
-        {!loading && !error && orders.length === 0 && (
-          <div className="p-10 text-center">
-            <FiShoppingBag
-              size={40}
-              className="mx-auto text-gray-300"
-            />
+        {/*             NO ORDERS
+         */}
 
-            <h2 className="mt-4 text-lg font-semibold text-gray-800">
+        {!loading && !error && orders.length === 0 && (
+          <div className="p-8 text-center sm:p-12 lg:p-16">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+              <FiShoppingBag
+                size={30}
+                className="text-gray-300"
+              />
+            </div>
+
+            <h2 className="mt-5 text-lg font-semibold text-gray-800">
               No Orders Found
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
-              Orders placed through the website will appear here.
+            <p className="mx-auto mt-2 max-w-md text-sm text-gray-500">
+              Orders placed through the website will appear
+              here.
             </p>
           </div>
         )}
 
-        {/* Orders Table */}
+        {/*             DESKTOP / TABLET TABLE
+         */}
+
         {!loading && !error && orders.length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[1600px] text-left">
+          <>
+            {/* DESKTOP TABLE */}
+            <div className="hidden overflow-x-auto xl:block">
+              <table className="w-full min-w-[1250px] text-left">
+                <thead>
+                  <tr className="border-b bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    <th className="whitespace-nowrap px-5 py-4">
+                      #
+                    </th>
 
-              <thead>
-                <tr className="border-b bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  <th className="px-6 py-4">#</th>
-                  <th className="px-6 py-4">Order ID</th>
-                  <th className="px-6 py-4">Customer</th>
-                  <th className="px-6 py-4">Email</th>
-                  <th className="px-6 py-4">Amount</th>
-                  <th className="px-6 py-4">Payment</th>
-                  <th className="px-6 py-4">Order Status</th>
-                  <th className="px-6 py-4">Shipping Address</th>
-                  <th className="px-6 py-4">City</th>
-                  <th className="px-6 py-4">State</th>
-                  <th className="px-6 py-4">PIN</th>
-                  <th className="px-6 py-4">Items</th>
-                  <th className="px-6 py-4">Date</th>
-                </tr>
-              </thead>
+                    <th className="whitespace-nowrap px-5 py-4">
+                      Order ID
+                    </th>
 
-              <tbody className="divide-y divide-gray-100">
-                {orders.map((order, index) => {
-                  const user = order?.user;
+                    <th className="whitespace-nowrap px-5 py-4">
+                      Customer
+                    </th>
 
-                  const customerName =
-                    user?.username ||
-                    user?.email ||
-                    order?.email ||
-                    "Guest";
+                    <th className="whitespace-nowrap px-5 py-4">
+                      Amount
+                    </th>
 
-                  const email =
-                    order?.email ||
-                    user?.email ||
-                    "N/A";
+                    <th className="whitespace-nowrap px-5 py-4">
+                      Payment
+                    </th>
 
-                  const items = getItems(order);
+                    <th className="whitespace-nowrap px-5 py-4">
+                      Status
+                    </th>
 
-                  return (
-                    <tr
-                      key={
-                        order?.documentId ||
-                        order?.id ||
-                        order?.orderId ||
-                        index
-                      }
-                      className="transition hover:bg-gray-50"
-                    >
-                      {/* Index */}
-                      <td className="px-6 py-5 text-sm font-semibold text-blue-600">
-                        #{index + 1}
-                      </td>
+                    <th className="whitespace-nowrap px-5 py-4">
+                      Address
+                    </th>
 
-                      {/* Order ID */}
-                      <td className="px-6 py-5">
-                        <span className="font-semibold text-gray-800">
-                          {order?.orderId ||
-                            order?.documentId ||
-                            "N/A"}
-                        </span>
-                      </td>
+                    <th className="whitespace-nowrap px-5 py-4">
+                      Items
+                    </th>
 
-                      {/* Customer */}
-                      <td className="px-6 py-5 text-sm font-medium text-gray-800">
-                        {customerName}
-                      </td>
+                    <th className="whitespace-nowrap px-5 py-4">
+                      Date
+                    </th>
+                  </tr>
+                </thead>
 
-                      {/* Email */}
-                      <td className="px-6 py-5 text-sm text-gray-600">
-                        {email}
-                      </td>
+                <tbody className="divide-y divide-gray-100">
+                  {orders.map((order, index) => {
+                    const items = getItems(order);
 
-                      {/* Amount */}
-                      <td className="px-6 py-5 text-sm font-semibold text-gray-800">
-                        {formatAmount(order?.amount)}
-                      </td>
+                    return (
+                      <tr
+                        key={
+                          order?.documentId ||
+                          order?.id ||
+                          order?.orderId ||
+                          index
+                        }
+                        className="transition hover:bg-gray-50"
+                      >
+                        {/* NUMBER */}
+                        <td className="px-5 py-5 text-sm font-semibold text-blue-600">
+                          #{index + 1}
+                        </td>
 
-                      {/* Payment Status */}
-                      <td className="px-6 py-5">
-                        <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getPaymentStatusClass(
-                            order?.paymentStatus
-                          )}`}
-                        >
-                          {order?.paymentStatus || "N/A"}
-                        </span>
-                      </td>
+                        {/* ORDER ID */}
+                        <td className="max-w-[180px] px-5 py-5">
+                          <p className="break-all text-sm font-semibold text-gray-800">
+                            {order?.orderId ||
+                              order?.documentId ||
+                              "N/A"}
+                          </p>
+                        </td>
 
-                      {/* Order Status */}
-                      <td className="px-6 py-5">
-                        <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getOrderStatusClass(
-                            order?.orderStatus
-                          )}`}
-                        >
-                          {order?.orderStatus || "N/A"}
-                        </span>
-                      </td>
+                        {/* CUSTOMER */}
+                        <td className="max-w-[220px] px-5 py-5">
+                          <p className="truncate text-sm font-semibold text-gray-800">
+                            {getCustomerName(order)}
+                          </p>
 
-                      {/* Shipping Address */}
-                      <td className="max-w-[280px] px-6 py-5 text-sm text-gray-600">
-                        <div className="flex items-start gap-2">
-                          <FiMapPin className="mt-0.5 shrink-0 text-gray-400" />
+                          <p className="mt-1 break-all text-xs text-gray-500">
+                            {getCustomerEmail(order)}
+                          </p>
+                        </td>
 
-                          <span className="line-clamp-2">
-                            {order?.shippingAddress || "N/A"}
+                        {/* AMOUNT */}
+                        <td className="whitespace-nowrap px-5 py-5 text-sm font-bold text-gray-800">
+                          {formatAmount(order?.amount)}
+                        </td>
+
+                        {/* PAYMENT */}
+                        <td className="px-5 py-5">
+                          <span
+                            className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${getPaymentStatusClass(
+                              order?.paymentStatus
+                            )}`}
+                          >
+                            {order?.paymentStatus || "N/A"}
                           </span>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* City */}
-                      <td className="px-6 py-5 text-sm text-gray-600">
-                        {order?.city || "N/A"}
-                      </td>
+                        {/* STATUS */}
+                        <td className="px-5 py-5">
+                          <span
+                            className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${getOrderStatusClass(
+                              order?.orderStatus
+                            )}`}
+                          >
+                            {order?.orderStatus || "N/A"}
+                          </span>
+                        </td>
 
-                      {/* State */}
-                      <td className="px-6 py-5 text-sm text-gray-600">
-                        {order?.state || "N/A"}
-                      </td>
+                        {/* ADDRESS */}
+                        <td className="max-w-[260px] px-5 py-5">
+                          <div className="flex items-start gap-2">
+                            <FiMapPin
+                              size={15}
+                              className="mt-0.5 shrink-0 text-gray-400"
+                            />
 
-                      {/* PIN */}
-                      <td className="px-6 py-5 text-sm text-gray-600">
-                        {order?.pin ?? "N/A"}
-                      </td>
+                            <div>
+                              <p className="line-clamp-2 break-words text-sm text-gray-600">
+                                {order?.shippingAddress ||
+                                  "N/A"}
+                              </p>
 
-                      {/* Items */}
-                      <td className="px-6 py-5 text-sm text-gray-600">
-                        {items.length > 0
-                          ? `${items.length} item${
-                              items.length > 1 ? "s" : ""
-                            }`
-                          : "N/A"}
-                      </td>
+                              <p className="mt-1 text-xs text-gray-400">
+                                {order?.city || "N/A"},{" "}
+                                {order?.state || "N/A"} -{" "}
+                                {order?.pin ?? "N/A"}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
 
-                      {/* Date */}
-                      <td className="px-6 py-5 text-sm text-gray-500">
-                        {formatDate(order?.createdAt)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
+                        {/* ITEMS */}
+                        <td className="whitespace-nowrap px-5 py-5 text-sm text-gray-600">
+                          {items.length > 0
+                            ? `${items.length} ${
+                                items.length === 1
+                                  ? "item"
+                                  : "items"
+                              }`
+                            : "N/A"}
+                        </td>
 
-            </table>
-          </div>
+                        {/* DATE */}
+                        <td className="whitespace-nowrap px-5 py-5 text-sm text-gray-500">
+                          {formatDate(order?.createdAt)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/*                 MOBILE + TABLET CARDS
+             */}
+
+            <div className="grid grid-cols-1 gap-4 p-4 sm:p-5 lg:grid-cols-2 xl:hidden">
+              {orders.map((order, index) =>
+                renderOrderDetails(order, index)
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>
   );
 };
 
-// Provider wrapper
+// ====
+// PROVIDER WRAPPER
+// ====
+
 const AdminOrders = () => {
   return (
     <AdminOrdersProvider>
@@ -735,3 +675,4 @@ const AdminOrders = () => {
 };
 
 export default AdminOrders;
+

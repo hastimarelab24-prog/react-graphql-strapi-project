@@ -18,9 +18,7 @@ import { useOffer } from "./OfferContext";
 export const AdminProductsContext =
   createContext(null);
 
-// ======================================================
 // DESCRIPTION → STRAPI BLOCKS
-// ======================================================
 
 const convertDescriptionToBlocks = (text) => {
   return text
@@ -37,9 +35,7 @@ const convertDescriptionToBlocks = (text) => {
     }));
 };
 
-// ======================================================
 // PROVIDER
-// ======================================================
 
 const AdminProductsProvider = ({ children }) => {
   const {
@@ -47,9 +43,7 @@ const AdminProductsProvider = ({ children }) => {
     loading: offerLoading,
   } = useOffer();
 
-  // ====================================================
   // FORM
-  // ====================================================
 
   const [formData, setFormData] = useState({
     name: "",
@@ -64,9 +58,7 @@ const AdminProductsProvider = ({ children }) => {
 
   const [images, setImages] = useState([]);
 
-  // ====================================================
   // DATA
-  // ====================================================
 
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -74,17 +66,13 @@ const AdminProductsProvider = ({ children }) => {
   const [totalProducts, setTotalProducts] =
     useState(0);
 
-  // ====================================================
   // LOADING / ERROR
-  // ====================================================
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState("");
 
-  // ====================================================
   // FETCH PRODUCTS
-  // ====================================================
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -121,9 +109,7 @@ const AdminProductsProvider = ({ children }) => {
     }
   }, []);
 
-  // ====================================================
   // FETCH CATEGORIES
-  // ====================================================
 
   const fetchCategoriesData =
     useCallback(async () => {
@@ -151,9 +137,7 @@ const AdminProductsProvider = ({ children }) => {
       }
     }, []);
 
-  // ====================================================
   // REFRESH EVERYTHING
-  // ====================================================
 
   const refreshProducts = useCallback(
     async () => {
@@ -168,17 +152,13 @@ const AdminProductsProvider = ({ children }) => {
     ]
   );
 
-  // ====================================================
   // INITIAL LOAD
-  // ====================================================
 
   useEffect(() => {
     refreshProducts();
   }, [refreshProducts]);
 
-  // ====================================================
   // FORM CHANGE
-  // ====================================================
 
   const handleChange = (e) => {
     const {
@@ -192,9 +172,7 @@ const AdminProductsProvider = ({ children }) => {
     }));
   };
 
-  // ====================================================
   // DISCOUNT TOGGLE
-  // ====================================================
 
   const handleDiscountChange = (e) => {
     setFormData((prev) => ({
@@ -204,9 +182,7 @@ const AdminProductsProvider = ({ children }) => {
     }));
   };
 
-  // ====================================================
   // IMAGE CHANGE
-  // ====================================================
 
   const handleImageChange = (e) => {
     const selectedImages = Array.from(
@@ -216,9 +192,7 @@ const AdminProductsProvider = ({ children }) => {
     setImages(selectedImages);
   };
 
-  // ====================================================
   // RESET FORM
-  // ====================================================
 
   const resetForm = () => {
     setFormData({
@@ -235,9 +209,7 @@ const AdminProductsProvider = ({ children }) => {
     setImages([]);
   };
 
-  // ====================================================
   // CREATE PRODUCT
-  // ====================================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -246,9 +218,7 @@ const AdminProductsProvider = ({ children }) => {
       setLoading(true);
       setError("");
 
-      // -----------------------------------------------
       // PRODUCT NAME
-      // -----------------------------------------------
 
       if (!formData.name.trim()) {
         throw new Error(
@@ -256,9 +226,7 @@ const AdminProductsProvider = ({ children }) => {
         );
       }
 
-      // -----------------------------------------------
       // DESCRIPTION
-      // -----------------------------------------------
 
       if (!formData.description.trim()) {
         throw new Error(
@@ -266,9 +234,7 @@ const AdminProductsProvider = ({ children }) => {
         );
       }
 
-      // -----------------------------------------------
       // PRICE
-      // -----------------------------------------------
 
       if (
         !Number.isInteger(
@@ -281,9 +247,7 @@ const AdminProductsProvider = ({ children }) => {
         );
       }
 
-      // -----------------------------------------------
       // STOCK
-      // -----------------------------------------------
 
       if (
         !Number.isInteger(
@@ -296,9 +260,7 @@ const AdminProductsProvider = ({ children }) => {
         );
       }
 
-      // -----------------------------------------------
       // DISCOUNT
-      // -----------------------------------------------
 
       if (
         formData.isDiscountActive &&
@@ -318,9 +280,7 @@ const AdminProductsProvider = ({ children }) => {
         );
       }
 
-      // -----------------------------------------------
       // IMAGE
-      // -----------------------------------------------
 
       if (images.length === 0) {
         throw new Error(
@@ -328,9 +288,7 @@ const AdminProductsProvider = ({ children }) => {
         );
       }
 
-      // -----------------------------------------------
       // UPLOAD IMAGES
-      // -----------------------------------------------
 
       const uploadedImages =
         await uploadImages(images);
@@ -343,9 +301,7 @@ const AdminProductsProvider = ({ children }) => {
         );
       }
 
-      // -----------------------------------------------
       // PRODUCT DATA
-      // -----------------------------------------------
 
       const productData = {
         name: formData.name.trim(),
@@ -392,9 +348,7 @@ const AdminProductsProvider = ({ children }) => {
           : {}),
       };
 
-      // -----------------------------------------------
       // CREATE
-      // -----------------------------------------------
 
       await createProduct(
         productData
@@ -406,9 +360,7 @@ const AdminProductsProvider = ({ children }) => {
 
       resetForm();
 
-      // -----------------------------------------------
       // REFRESH
-      // -----------------------------------------------
 
       await refreshProducts();
     } catch (err) {
@@ -426,9 +378,7 @@ const AdminProductsProvider = ({ children }) => {
     }
   };
 
-  // ====================================================
   // DELETE PRODUCT
-  // ====================================================
 
   const handleDeleteProduct = async (
     product
@@ -480,9 +430,7 @@ const AdminProductsProvider = ({ children }) => {
     }
   };
 
-  // ====================================================
   // EFFECTIVE DISCOUNT
-  // ====================================================
 
   const getEffectiveDiscount = (
     product
@@ -538,9 +486,7 @@ const AdminProductsProvider = ({ children }) => {
     };
   };
 
-  // ====================================================
   // DISCOUNT PRICE
-  // ====================================================
 
   const getDiscountPrice = (
     product
@@ -583,9 +529,7 @@ const AdminProductsProvider = ({ children }) => {
     return price;
   };
 
-  // ====================================================
   // GROUP PRODUCTS BY CATEGORY
-  // ====================================================
 
   const getProductsByCategory = () => {
     const grouped = {};
@@ -619,9 +563,7 @@ const AdminProductsProvider = ({ children }) => {
   const groupedProducts =
     getProductsByCategory();
 
-  // ====================================================
   // CONTEXT VALUE
-  // ====================================================
 
   return (
     <AdminProductsContext.Provider

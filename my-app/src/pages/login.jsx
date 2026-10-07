@@ -302,9 +302,7 @@ const Login = () => {
         identifier
       );
 
-      // -------------------------
       // Login
-      // -------------------------
 
       const response = await fetch(
         `${API_URL}/api/auth/local`,
@@ -333,9 +331,7 @@ const Login = () => {
         result
       );
 
-      // -------------------------
       // Error handling
-      // -------------------------
 
       if (!response.ok) {
         if (response.status === 400) {
@@ -364,9 +360,7 @@ const Login = () => {
         );
       }
 
-      // -------------------------
       // Validate response
-      // -------------------------
 
       if (
         !result?.jwt ||
@@ -382,9 +376,7 @@ const Login = () => {
         result.user
       );
 
-      // -------------------------
       // Save actual user
-      // -------------------------
 
       const loggedInUser = {
         ...result.user,
@@ -447,17 +439,13 @@ try {
     activityError
   );
 }
-      // -------------------------
       // Notify Navbar/Auth
-      // -------------------------
 
       window.dispatchEvent(
         new Event("authChange")
       );
 
-      // -------------------------
       // Redirect
-      // -------------------------
 
       const from =
         location.state?.from?.pathname ||

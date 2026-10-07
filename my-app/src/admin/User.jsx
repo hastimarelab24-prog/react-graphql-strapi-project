@@ -1,212 +1,3 @@
-// import React from "react";
-// import { FiUsers, FiXCircle, FiRefreshCw } from "react-icons/fi";
-// import { useQuery } from "@apollo/client/react";
-// import { GET_ALL_USERS } from "../gqloperation/adminQueries";
-
-// const AdminUsers = () => {
-//   const { data, loading, error, refetch } = useQuery(GET_ALL_USERS, {
-//     fetchPolicy: "network-only",
-//   });
-
-//   const users = data?.usersPermissionsUsers || [];
-
-//   const formatDate = (date) => {
-//     if (!date) return "N/A";
-
-//     return new Date(date).toLocaleDateString("en-IN", {
-//       day: "2-digit",
-//       month: "short",
-//       year: "numeric",
-//     });
-//   };
-
-//   return (
-//     <div className="space-y-6">
-//       {/* Header */}
-//       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-//         <div>
-//           <h1 className="text-2xl font-bold text-gray-800">
-//             Users Management
-//           </h1>
-
-//           <p className="mt-1 text-sm text-gray-500">
-//             List of all registered website users from Strapi database.
-//           </p>
-//         </div>
-
-//         <button
-//           type="button"
-//           onClick={() => refetch()}
-//           disabled={loading}
-//           className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-//         >
-//           <FiRefreshCw
-//             size={16}
-//             className={loading ? "animate-spin" : ""}
-//           />
-//           Refresh
-//         </button>
-//       </div>
-
-//       {/* User Count */}
-//       {!loading && !error && (
-//         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-//           <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-//             <div className="flex items-center gap-4">
-//               <div className="rounded-xl bg-blue-100 p-3 text-blue-600">
-//                 <FiUsers size={24} />
-//               </div>
-
-//               <div>
-//                 <p className="text-sm text-gray-500">Total Users</p>
-//                 <p className="text-2xl font-bold text-gray-800">
-//                   {users.length}
-//                 </p>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Main Card */}
-//       <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-//         {/* Loading */}
-//         {loading && (
-//           <div className="p-10 text-center">
-//             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600" />
-
-//             <p className="mt-3 text-sm text-gray-500">
-//               Loading registered users...
-//             </p>
-//           </div>
-//         )}
-
-//         {/* Error */}
-//         {error && (
-//           <div className="p-8 text-center">
-//             <FiXCircle
-//               size={40}
-//               className="mx-auto text-red-500"
-//             />
-
-//             <p className="mt-3 font-semibold text-red-500">
-//               Failed to load users
-//             </p>
-
-//             <p className="mx-auto mt-2 max-w-2xl text-xs text-gray-500">
-//               {error.message}
-//             </p>
-
-//             <button
-//               type="button"
-//               onClick={() => refetch()}
-//               className="mt-5 rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
-//             >
-//               Try Again
-//             </button>
-//           </div>
-//         )}
-
-//         {/* No users */}
-//         {!loading && !error && users.length === 0 && (
-//           <div className="p-10 text-center">
-//             <FiUsers
-//               size={40}
-//               className="mx-auto text-gray-300"
-//             />
-
-//             <h2 className="mt-4 text-lg font-semibold text-gray-800">
-//               No Users Found
-//             </h2>
-
-//             <p className="mt-1 text-sm text-gray-500">
-//               Users registered through the website will appear here.
-//             </p>
-//           </div>
-//         )}
-
-//         {/* Users Table */}
-//         {!loading && !error && users.length > 0 && (
-//           <div className="overflow-x-auto">
-//             <table className="w-full min-w-[750px] text-left">
-//               <thead>
-//                 <tr className="border-b bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
-//                   <th className="px-6 py-4">
-//                     Index
-//                   </th>
-
-//                   <th className="px-6 py-4">
-//                     User ID
-//                   </th>
-
-//                   <th className="px-6 py-4">
-//                     Email
-//                   </th>
-
-//                   <th className="px-6 py-4">
-//                     Account Status
-//                   </th>
-
-//                   <th className="px-6 py-4">
-//                     Registration Date
-//                   </th>
-//                 </tr>
-//               </thead>
-
-//               <tbody className="divide-y divide-gray-100">
-//                 {users.map((user, index) => (
-//                   <tr
-//                     key={user.documentId || `user-${index}`}
-//                     className="transition hover:bg-gray-50"
-//                   >
-//                     {/* Index */}
-//                     <td className="px-6 py-4 text-sm font-semibold text-blue-600">
-//                       #{index + 1}
-//                     </td>
-
-//                     {/* User ID */}
-//                     <td className="px-6 py-4 text-sm font-medium text-gray-800">
-//                       {user.documentId || "N/A"}
-//                     </td>
-
-//                     {/* Email */}
-//                     <td className="px-6 py-4 text-sm text-gray-600">
-//                       {user.email || "N/A"}
-//                     </td>
-
-//                     {/* Account Status */}
-//                     <td className="px-6 py-4 text-sm">
-//                       <span
-//                         className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
-//                           user.confirmed
-//                             ? "bg-green-100 text-green-700"
-//                             : "bg-yellow-100 text-yellow-700"
-//                         }`}
-//                       >
-//                         {user.confirmed
-//                           ? "Confirmed"
-//                           : "Pending"}
-//                       </span>
-//                     </td>
-
-//                     {/* Registration Date */}
-//                     <td className="px-6 py-4 text-sm text-gray-500">
-//                       {formatDate(user.createdAt)}
-//                     </td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AdminUsers;
-
-
 import React from "react";
 
 import {
@@ -216,78 +7,90 @@ import {
   FiCheckCircle,
   FiUserX,
   FiActivity,
+  FiMail,
+  FiCalendar,
+  FiClock,
+  FiHash,
 } from "react-icons/fi";
 
 import { useQuery } from "@apollo/client/react";
 
-import {
-  GET_ALL_USERS,
-} from "../gqloperation/adminQueries";
+import { GET_ALL_USERS } from "../gqloperation/adminQueries";
 
 const AdminUsers = () => {
-  const {
-    data,
-    loading,
-    error,
-    refetch,
-  } = useQuery(GET_ALL_USERS, {
+  const { data, loading, error, refetch } = useQuery(GET_ALL_USERS, {
     fetchPolicy: "network-only",
   });
 
-  const users =
-    data?.usersPermissionsUsers || [];
+  const users = data?.usersPermissionsUsers || [];
 
-  // -------------------------
   // Counts
-  // -------------------------
 
   const totalUsers = users.length;
 
   const activeUsers = users.filter(
-    (user) =>
-      user.isOnline === true
+    (user) => user.isOnline === true
   ).length;
 
-  const loggedOutUsers =
-    users.filter(
-      (user) =>
-        user.isOnline !== true
-    ).length;
+  const loggedOutUsers = users.filter(
+    (user) => user.isOnline !== true
+  ).length;
 
-  // -------------------------
-  // Date
-  // -------------------------
+  // Date Formatter
 
   const formatDate = (date) => {
     if (!date) {
       return "N/A";
     }
 
-    return new Date(date).toLocaleString(
-      "en-IN",
-      {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }
-    );
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "N/A";
+    }
+
+    return parsedDate.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  // Short Date
+
+  const formatShortDate = (date) => {
+    if (!date) {
+      return "N/A";
+    }
+
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "N/A";
+    }
+
+    return parsedDate.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-5 sm:space-y-6">
+      {/* 
+          HEADER
+       */}
 
-      {/* Header */}
-
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">
+      <div className="flex flex-col gap-4 rounded-2xl bg-white p-4 shadow-sm sm:p-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-xl font-bold text-gray-800 sm:text-2xl">
             Users Management
           </h1>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-xs leading-5 text-gray-500 sm:text-sm">
             Monitor registered users and their login status.
           </p>
         </div>
@@ -296,125 +99,110 @@ const AdminUsers = () => {
           type="button"
           onClick={() => refetch()}
           disabled={loading}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
           <FiRefreshCw
             size={16}
-            className={
-              loading
-                ? "animate-spin"
-                : ""
-            }
+            className={loading ? "animate-spin" : ""}
           />
 
-          Refresh
+          <span>Refresh</span>
         </button>
-
       </div>
 
-      {/* Statistics */}
+      {/* 
+          STATISTICS
+       */}
 
       {!loading && !error && (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Total Users */}
 
-          {/* Total */}
-
-          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
             <div className="flex items-center gap-4">
-
-              <div className="rounded-xl bg-blue-100 p-3 text-blue-600">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600 sm:h-14 sm:w-14">
                 <FiUsers size={24} />
               </div>
 
-              <div>
-                <p className="text-sm text-gray-500">
+              <div className="min-w-0">
+                <p className="text-xs text-gray-500 sm:text-sm">
                   Total Users
                 </p>
 
-                <p className="text-2xl font-bold text-gray-800">
+                <p className="mt-1 text-xl font-bold text-gray-800 sm:text-2xl">
                   {totalUsers}
                 </p>
               </div>
-
             </div>
-
           </div>
 
-          {/* Active */}
+          {/* Active Users */}
 
-          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
             <div className="flex items-center gap-4">
-
-              <div className="rounded-xl bg-green-100 p-3 text-green-600">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-100 text-green-600 sm:h-14 sm:w-14">
                 <FiActivity size={24} />
               </div>
 
-              <div>
-                <p className="text-sm text-gray-500">
+              <div className="min-w-0">
+                <p className="text-xs text-gray-500 sm:text-sm">
                   Active Users
                 </p>
 
-                <p className="text-2xl font-bold text-green-600">
+                <p className="mt-1 text-xl font-bold text-green-600 sm:text-2xl">
                   {activeUsers}
                 </p>
               </div>
-
             </div>
-
           </div>
 
           {/* Logged Out */}
 
-          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
             <div className="flex items-center gap-4">
-
-              <div className="rounded-xl bg-gray-100 p-3 text-gray-600">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-gray-600 sm:h-14 sm:w-14">
                 <FiUserX size={24} />
               </div>
 
-              <div>
-                <p className="text-sm text-gray-500">
+              <div className="min-w-0">
+                <p className="text-xs text-gray-500 sm:text-sm">
                   Logged Out Users
                 </p>
 
-                <p className="text-2xl font-bold text-gray-800">
+                <p className="mt-1 text-xl font-bold text-gray-800 sm:text-2xl">
                   {loggedOutUsers}
                 </p>
               </div>
-
             </div>
-
           </div>
-
         </div>
       )}
 
-      {/* Main Card */}
+      {/* 
+          MAIN CARD
+       */}
 
       <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-
-        {/* Loading */}
+        {/* 
+            LOADING
+         */}
 
         {loading && (
-          <div className="p-10 text-center">
-
+          <div className="px-4 py-12 text-center sm:px-6 sm:py-16">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600" />
 
             <p className="mt-3 text-sm text-gray-500">
               Loading users...
             </p>
-
           </div>
         )}
 
-        {/* Error */}
+        {/* 
+            ERROR
+         */}
 
         {error && (
-          <div className="p-8 text-center">
-
+          <div className="px-4 py-10 text-center sm:px-6 sm:py-14">
             <FiXCircle
               size={40}
               className="mx-auto text-red-500"
@@ -424,224 +212,371 @@ const AdminUsers = () => {
               Failed to load users
             </p>
 
-            <p className="mx-auto mt-2 max-w-2xl text-xs text-gray-500">
+            <p className="mx-auto mt-2 max-w-2xl break-words text-xs leading-5 text-gray-500">
               {error.message}
             </p>
 
             <button
               type="button"
               onClick={() => refetch()}
-              className="mt-5 rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              className="mt-5 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
             >
               Try Again
             </button>
-
           </div>
         )}
 
-        {/* Empty */}
+        {/* 
+            EMPTY
+         */}
 
-        {!loading &&
-          !error &&
-          users.length === 0 && (
-            <div className="p-10 text-center">
+        {!loading && !error && users.length === 0 && (
+          <div className="px-4 py-12 text-center sm:px-6 sm:py-16">
+            <FiUsers
+              size={40}
+              className="mx-auto text-gray-300"
+            />
 
-              <FiUsers
-                size={40}
-                className="mx-auto text-gray-300"
-              />
+            <h2 className="mt-4 text-lg font-semibold text-gray-800">
+              No Users Found
+            </h2>
 
-              <h2 className="mt-4 text-lg font-semibold text-gray-800">
-                No Users Found
-              </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              Registered users will appear here.
+            </p>
+          </div>
+        )}
 
-              <p className="mt-1 text-sm text-gray-500">
-                Registered users will appear here.
-              </p>
+        {/* 
+            DESKTOP / TABLET TABLE
+            Visible from md and above
+         */}
 
-            </div>
-          )}
-
-        {/* Table */}
-
-        {!loading &&
-          !error &&
-          users.length > 0 && (
-            <div className="overflow-x-auto">
-
-              <table className="w-full min-w-[900px] text-left">
-
+        {!loading && !error && users.length > 0 && (
+          <>
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full text-left">
                 <thead>
                   <tr className="border-b bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
-
-                    <th className="px-6 py-4">
+                    <th className="whitespace-nowrap px-4 py-4 lg:px-6">
                       #
                     </th>
 
-                    <th className="px-6 py-4">
+                    <th className="whitespace-nowrap px-4 py-4 lg:px-6">
                       Username
                     </th>
 
-                    <th className="px-6 py-4">
+                    <th className="whitespace-nowrap px-4 py-4 lg:px-6">
                       Email
                     </th>
 
-                    <th className="px-6 py-4">
+                    <th className="whitespace-nowrap px-4 py-4 lg:px-6">
                       Login Status
                     </th>
 
-                    <th className="px-6 py-4">
+                    <th className="whitespace-nowrap px-4 py-4 lg:px-6">
                       Account Status
                     </th>
 
-                    <th className="px-6 py-4">
+                    <th className="whitespace-nowrap px-4 py-4 lg:px-6">
                       Last Login
                     </th>
 
-                    <th className="px-6 py-4">
+                    <th className="whitespace-nowrap px-4 py-4 lg:px-6">
                       Registered
                     </th>
-
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-gray-100">
+                  {users.map((user, index) => (
+                    <tr
+                      key={
+                        user.documentId ||
+                        user.id ||
+                        `user-${index}`
+                      }
+                      className="transition hover:bg-gray-50"
+                    >
+                      {/* Index */}
 
-                  {users.map(
-                    (user, index) => (
-                      <tr
-                        key={
-                          user.documentId ||
-                          user.id ||
-                          `user-${index}`
-                        }
-                        className="transition hover:bg-gray-50"
-                      >
-
-                        {/* Index */}
-
-                        <td className="px-6 py-4 text-sm font-semibold text-blue-600">
+                      <td className="px-4 py-4 lg:px-6">
+                        <span className="text-sm font-semibold text-blue-600">
                           #{index + 1}
-                        </td>
+                        </span>
+                      </td>
 
-                        {/* Username */}
+                      {/* Username */}
 
-                        <td className="px-6 py-4">
-
-                          <div className="flex items-center gap-3">
-
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600">
-                              {(
-                                user.username ||
-                                "U"
-                              )
-                                .charAt(0)
-                                .toUpperCase()}
-                            </div>
-
-                            <div>
-
-                              <p className="text-sm font-semibold text-gray-800">
-                                {user.username ||
-                                  "N/A"}
-                              </p>
-
-                              <p className="text-xs text-gray-400">
-                                User ID:{" "}
-                                {user.id ||
-                                  "N/A"}
-                              </p>
-
-                            </div>
-
+                      <td className="px-4 py-4 lg:px-6">
+                        <div className="flex min-w-[150px] items-center gap-3">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600">
+                            {(user.username || "U")
+                              .charAt(0)
+                              .toUpperCase()}
                           </div>
 
-                        </td>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-gray-800">
+                              {user.username || "N/A"}
+                            </p>
 
-                        {/* Email */}
+                            <p className="truncate text-xs text-gray-400">
+                              ID: {user.id || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
 
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          {user.email ||
-                            "N/A"}
-                        </td>
+                      {/* Email */}
 
-                        {/* Login Status */}
+                      <td className="max-w-[220px] px-4 py-4 lg:px-6">
+                        <div className="flex items-center gap-2">
+                          <FiMail
+                            size={14}
+                            className="shrink-0 text-gray-400"
+                          />
 
-                        <td className="px-6 py-4">
+                          <span className="truncate text-sm text-gray-600">
+                            {user.email || "N/A"}
+                          </span>
+                        </div>
+                      </td>
 
-                          {user.isOnline ? (
-                            <span className="inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                      {/* Login Status */}
 
-                              <span className="h-2 w-2 rounded-full bg-green-500" />
+                      <td className="px-4 py-4 lg:px-6">
+                        {user.isOnline ? (
+                          <span className="inline-flex whitespace-nowrap items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                            <span className="h-2 w-2 rounded-full bg-green-500" />
+                            Active
+                          </span>
+                        ) : (
+                          <span className="inline-flex whitespace-nowrap items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+                            <span className="h-2 w-2 rounded-full bg-gray-400" />
+                            Logged Out
+                          </span>
+                        )}
+                      </td>
 
-                              Active
+                      {/* Account Status */}
 
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+                      <td className="px-4 py-4 lg:px-6">
+                        {user.blocked ? (
+                          <span className="inline-flex whitespace-nowrap items-center rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
+                            Blocked
+                          </span>
+                        ) : user.confirmed ? (
+                          <span className="inline-flex whitespace-nowrap items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                            <FiCheckCircle size={13} />
+                            Confirmed
+                          </span>
+                        ) : (
+                          <span className="inline-flex whitespace-nowrap items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
+                            Pending
+                          </span>
+                        )}
+                      </td>
 
-                              <span className="h-2 w-2 rounded-full bg-gray-400" />
+                      {/* Last Login */}
 
-                              Logged Out
+                      <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500 lg:px-6">
+                        {formatDate(user.lastLoginAt)}
+                      </td>
 
-                            </span>
-                          )}
+                      {/* Registered */}
 
-                        </td>
-
-                        {/* Account Status */}
-
-                        <td className="px-6 py-4">
-
-                          {user.blocked ? (
-                            <span className="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
-                              Blocked
-                            </span>
-                          ) : user.confirmed ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-
-                              <FiCheckCircle size={13} />
-
-                              Confirmed
-
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
-                              Pending
-                            </span>
-                          )}
-
-                        </td>
-
-                        {/* Last Login */}
-
-                        <td className="px-6 py-4 text-sm text-gray-500">
-                          {formatDate(
-                            user.lastLoginAt
-                          )}
-                        </td>
-
-                        {/* Registration */}
-
-                        <td className="px-6 py-4 text-sm text-gray-500">
-                          {formatDate(
-                            user.createdAt
-                          )}
-                        </td>
-
-                      </tr>
-                    )
-                  )}
-
+                      <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500 lg:px-6">
+                        {formatDate(user.createdAt)}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
-
               </table>
-
             </div>
-          )}
 
+            {/* 
+                MOBILE USER CARDS
+                Visible below md
+             */}
+
+            <div className="divide-y divide-gray-100 md:hidden">
+              {users.map((user, index) => (
+                <div
+                  key={
+                    user.documentId ||
+                    user.id ||
+                    `user-${index}`
+                  }
+                  className="p-4 sm:p-5"
+                >
+                  {/* User Header */}
+
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-base font-bold text-blue-600">
+                        {(user.username || "U")
+                          .charAt(0)
+                          .toUpperCase()}
+                      </div>
+
+                      <div className="min-w-0">
+                        <h3 className="truncate text-sm font-semibold text-gray-800 sm:text-base">
+                          {user.username || "N/A"}
+                        </h3>
+
+                        <p className="mt-0.5 truncate text-xs text-gray-400">
+                          User #{index + 1}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Login Status */}
+
+                    {user.isOnline ? (
+                      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-green-100 px-2.5 py-1 text-[11px] font-semibold text-green-700 sm:text-xs">
+                        <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                        Active
+                      </span>
+                    ) : (
+                      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-600 sm:text-xs">
+                        <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
+                        Logged Out
+                      </span>
+                    )}
+                  </div>
+
+                  {/* User Details */}
+
+                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {/* ID */}
+
+                    <div className="rounded-xl bg-gray-50 p-3">
+                      <div className="flex items-center gap-2">
+                        <FiHash
+                          size={14}
+                          className="shrink-0 text-gray-400"
+                        />
+
+                        <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                          User ID
+                        </span>
+                      </div>
+
+                      <p className="mt-1 truncate text-sm font-medium text-gray-700">
+                        {user.id || "N/A"}
+                      </p>
+                    </div>
+
+                    {/* Email */}
+
+                    <div className="rounded-xl bg-gray-50 p-3">
+                      <div className="flex items-center gap-2">
+                        <FiMail
+                          size={14}
+                          className="shrink-0 text-gray-400"
+                        />
+
+                        <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                          Email
+                        </span>
+                      </div>
+
+                      <p className="mt-1 break-all text-sm font-medium text-gray-700">
+                        {user.email || "N/A"}
+                      </p>
+                    </div>
+
+                    {/* Account Status */}
+
+                    <div className="rounded-xl bg-gray-50 p-3">
+                      <div className="flex items-center gap-2">
+                        <FiCheckCircle
+                          size={14}
+                          className="shrink-0 text-gray-400"
+                        />
+
+                        <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                          Account Status
+                        </span>
+                      </div>
+
+                      <div className="mt-2">
+                        {user.blocked ? (
+                          <span className="inline-flex rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700">
+                            Blocked
+                          </span>
+                        ) : user.confirmed ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700">
+                            <FiCheckCircle size={12} />
+                            Confirmed
+                          </span>
+                        ) : (
+                          <span className="inline-flex rounded-full bg-yellow-100 px-2.5 py-1 text-xs font-medium text-yellow-700">
+                            Pending
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Last Login */}
+
+                    <div className="rounded-xl bg-gray-50 p-3">
+                      <div className="flex items-center gap-2">
+                        <FiClock
+                          size={14}
+                          className="shrink-0 text-gray-400"
+                        />
+
+                        <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                          Last Login
+                        </span>
+                      </div>
+
+                      <p className="mt-1 text-sm font-medium text-gray-700">
+                        {formatDate(user.lastLoginAt)}
+                      </p>
+                    </div>
+
+                    {/* Registered */}
+
+                    <div className="rounded-xl bg-gray-50 p-3 sm:col-span-2">
+                      <div className="flex items-center gap-2">
+                        <FiCalendar
+                          size={14}
+                          className="shrink-0 text-gray-400"
+                        />
+
+                        <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                          Registered
+                        </span>
+                      </div>
+
+                      <p className="mt-1 text-sm font-medium text-gray-700">
+                        {formatDate(user.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
+      {/* 
+          MOBILE SUMMARY
+       */}
+
+      {!loading && !error && users.length > 0 && (
+        <div className="rounded-xl bg-gray-50 px-4 py-3 text-center text-xs text-gray-500 sm:text-sm">
+          Showing{" "}
+          <span className="font-semibold text-gray-700">
+            {users.length}
+          </span>{" "}
+          registered user{users.length !== 1 ? "s" : ""}
+        </div>
+      )}
     </div>
   );
 };

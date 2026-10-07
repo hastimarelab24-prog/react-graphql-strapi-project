@@ -364,7 +364,7 @@ const AdminDashboardContent = () => {
       case "Products":
         return <AdminProducts />;
 
-      case "stockmanegmanet":
+      case "Stock Management":
         return <StockManagement />;
 
       case "Category":

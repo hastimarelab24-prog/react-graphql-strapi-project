@@ -34,13 +34,12 @@ function Category() {
 
   // allproducts
   const {
-    data:allProductsData,
-    loading:allProductsLoading,
-    error:allProductsError,
-  }=useQuery(GET_ALL_PRODUCTS,{
-    skip:selectedCategory !==""
-    
-  })
+    data: allProductsData,
+    loading: allProductsLoading,
+    error: allProductsError,
+  } = useQuery(GET_ALL_PRODUCTS, {
+    skip: selectedCategory !== "",
+  });
 
   // category loading
   if (categoryLoading) {
@@ -54,8 +53,9 @@ function Category() {
   // categroy data
   const categories = categoryData?.categories || [];
   //   products data
-  const products = selectedCategory?
-   productsdata?.products || []: allProductsData?.products ||[];
+  const products = selectedCategory
+    ? productsdata?.products || []
+    : allProductsData?.products || [];
 
   return (
     <div className="min-h-screen mt-16 bg-stone-50">
@@ -80,10 +80,9 @@ function Category() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-wrap justify-center gap-3">
           <button
-          onClick={()=>setSelectedCategory("")}
+            onClick={() => setSelectedCategory("")}
             className="px-6 py-3 rounded-full border text-sm sm:text-base font-semibold
              transition-all shadow-sm duration-300"
-            
           >
             All
           </button>
@@ -113,92 +112,82 @@ function Category() {
       </section>
 
       {/* Selected Category */}
-     
-       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
 
-  <div className="flex items-center justify-between mb-8 border-b border-stone-200 pb-5">
-    <div>
-      <p className="text-sm text-stone-500 uppercase tracking-widest">
-        Collection
-      </p>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="flex items-center justify-between mb-8 border-b border-stone-200 pb-5">
+          <div>
+            <p className="text-sm text-stone-500 uppercase tracking-widest">
+              Collection
+            </p>
 
-      <h2 className="text-2xl md:text-3xl font-bold text-stone-900 mt-1">
-        {selectedCategory || "All Products"}
-      </h2>
-    </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-stone-900 mt-1">
+              {selectedCategory || "All Products"}
+            </h2>
+          </div>
 
-    {!productLoading &&
-      !allProductsLoading &&
-      !productsError &&
-      !allProductsError && (
-        <span className="text-sm text-stone-500">
-          {products.length} Products
-        </span>
-      )}
-  </div>
+          {!productLoading &&
+            !allProductsLoading &&
+            !productsError &&
+            !allProductsError && (
+              <span className="text-sm text-stone-500">
+                {products.length} Products
+              </span>
+            )}
+        </div>
 
-  {(productLoading || allProductsLoading) && (
-    <div className="py-16 text-center">
-      <p className="text-stone-500 text-lg animate-pulse">
-        Loading Products...
-      </p>
-    </div>
-  )}
-
-  {(productsError || allProductsError) && (
-    <div className="rounded-xl bg-red-50 border border-red-200 p-5 text-red-600">
-      {(productsError || allProductsError).message}
-    </div>
-  )}
-
-  {!productLoading &&
-    !allProductsLoading &&
-    !productsError &&
-    !allProductsError && (
-      <>
-        {products.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
-            <p className="text-stone-500 text-lg">
-              No products found.
+        {(productLoading || allProductsLoading) && (
+          <div className="py-16 text-center">
+            <p className="text-stone-500 text-lg animate-pulse">
+              Loading Products...
             </p>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product) => {
-              const imageUrl = product.images?.[0]?.url || "";
+        )}
 
-              return (
-             <Card
-  documentId={product.documentId}
-  name={product.name}
-  price={product.price}
-  stock={product.stock}
-  imageUrl={product.images?.[0]?.url}
-
-  isDiscountActive={product.isDiscountActive}
-  discountType={product.discountType}
-  discountValue={product.discountValue}
-
-  categoryIsDiscountActive={
-    product.category?.isDiscountActive
-  }
-  categoryDiscountType={
-    product.category?.discountType
-  }
-  categoryDiscountValue={
-    product.category?.discountValue
-  }
-/>
-              );
-            })}
+        {(productsError || allProductsError) && (
+          <div className="rounded-xl bg-red-50 border border-red-200 p-5 text-red-600">
+            {(productsError || allProductsError).message}
           </div>
         )}
-      </>
-    )}
-</section>
-      
 
-      {/* Before Category Selected */}
+        {!productLoading &&
+          !allProductsLoading &&
+          !productsError &&
+          !allProductsError && (
+            <>
+              {products.length === 0 ? (
+                <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
+                  <p className="text-stone-500 text-lg">No products found.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {products.map((product) => {
+                    const imageUrl = product.images?.[0]?.url || "";
+
+                    return (
+                      <Card
+                        documentId={product.documentId}
+                        name={product.name}
+                        price={product.price}
+                        stock={product.stock}
+                        imageUrl={product.images?.[0]?.url}
+                        isDiscountActive={product.isDiscountActive}
+                        discountType={product.discountType}
+                        discountValue={product.discountValue}
+                        categoryIsDiscountActive={
+                          product.category?.isDiscountActive
+                        }
+                        categoryDiscountType={product.category?.discountType}
+                        categoryDiscountValue={product.category?.discountValue}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          )}
+      </section>
+
+      {/* Before Category Selected
       {!selectedCategory && (
         <div className="max-w-7xl mx-auto px-4 pb-16">
           <div
@@ -211,8 +200,8 @@ function Category() {
             text-center
             shadow-sm
           "
-          >
-            <div className="text-4xl mb-4">✨</div>
+          > */}
+            {/* <div className="text-4xl mb-4">✨</div>
 
             <h2 className="text-xl font-semibold text-stone-800">
               Select a Category
@@ -220,10 +209,10 @@ function Category() {
 
             <p className="text-stone-500 mt-2">
               Choose a category above to explore our products.
-            </p>
-          </div>
-        </div>
-      )}
+            </p> */}
+          {/* </div>
+        </div> */}
+      {/* )} */}
     </div>
   );
 }
