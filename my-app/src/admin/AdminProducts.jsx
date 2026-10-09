@@ -56,6 +56,7 @@ const AdminProductsContent = () => {
     error = "",
 
     isEditing = false,
+    editingProductIndex,
     editingProduct = null,
 
     handleChange,

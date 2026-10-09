@@ -12,7 +12,6 @@
 
 // import { useOffer } from "./OfferContext";
 
-
 // export const AdminProductsContext = createContext(null);
 
 // // DESCRIPTION → STRAPI BLOCKS
@@ -547,7 +546,6 @@
 //   }
 // };
 
-
 //   // DELETE PRODUCT
 
 //   const handleDeleteProduct = async (product) => {
@@ -784,13 +782,7 @@
 
 // export default AdminProductsProvider;
 
-
-import React, {
-  createContext,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useEffect, useState } from "react";
 
 import {
   getProducts,
@@ -834,10 +826,7 @@ const convertBlocksToDescription = (description) => {
     return description;
   }
 
-  if (
-    typeof description === "number" ||
-    typeof description === "boolean"
-  ) {
+  if (typeof description === "number" || typeof description === "boolean") {
     return String(description);
   }
 
@@ -846,10 +835,7 @@ const convertBlocksToDescription = (description) => {
       .map((block) => {
         if (typeof block === "string") return block;
 
-        if (
-          typeof block === "number" ||
-          typeof block === "boolean"
-        ) {
+        if (typeof block === "number" || typeof block === "boolean") {
           return String(block);
         }
 
@@ -872,9 +858,7 @@ const convertBlocksToDescription = (description) => {
             .join("");
         }
 
-        return typeof block?.text === "string"
-          ? block.text
-          : "";
+        return typeof block?.text === "string" ? block.text : "";
       })
       .filter((line) => line.trim() !== "")
       .join("\n");
@@ -886,9 +870,7 @@ const convertBlocksToDescription = (description) => {
     }
 
     if (Array.isArray(description.children)) {
-      return description.children
-        .map((child) => child?.text ?? "")
-        .join("");
+      return description.children.map((child) => child?.text ?? "").join("");
     }
   }
 
@@ -919,7 +901,7 @@ const AdminProductsProvider = ({ children }) => {
   const [urlImages, setUrlImages] = useState([]);
 
   const [editingProduct, setEditingProduct] = useState(null);
-  const [editingProductId,setEditingProductId] =useState(null)
+  const [editingProductIndex, setEditingProductIndex] = useState(null);
 
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -933,60 +915,55 @@ const AdminProductsProvider = ({ children }) => {
   const isEditing = Boolean(editingProduct);
 
   // Fetch products.
- const fetchProducts = useCallback(async () => {
-  try {
-    setFetching(true);
-    setError("");
+  const fetchProducts = useCallback(async () => {
+    try {
+      setFetching(true);
+      setError("");
 
-    const result = await getProducts();
+      const result = await getProducts();
 
-    // API array અથવા Strapi { data: [...] } બંને support કરે છે
-    const productData = Array.isArray(result)
-      ? result
-      : Array.isArray(result?.data)
-        ? result.data
-        : [];
+      // API array અથવા Strapi { data: [...] } બંને support કરે છે
+      const productData = Array.isArray(result)
+        ? result
+        : Array.isArray(result?.data)
+          ? result.data
+          : [];
 
-    setProducts(productData);
+      setProducts(productData);
 
-    setTotalProducts(
-      result?.meta?.pagination?.total ?? productData.length
-    );
-  } catch (err) {
-    console.error("Fetch products error:", err);
-    setError(err?.message || "Unable to load products.");
-    setProducts([]);
-    setTotalProducts(0);
-  } finally {
-    setFetching(false);
-  }
-}, []);
+      setTotalProducts(result?.meta?.pagination?.total ?? productData.length);
+    } catch (err) {
+      console.error("Fetch products error:", err);
+      setError(err?.message || "Unable to load products.");
+      setProducts([]);
+      setTotalProducts(0);
+    } finally {
+      setFetching(false);
+    }
+  }, []);
 
   // Fetch categories.
-const fetchCategoriesData = useCallback(async () => {
-  try {
-    const result = await getCategories();
+  const fetchCategoriesData = useCallback(async () => {
+    try {
+      const result = await getCategories();
 
-    const categoryData = Array.isArray(result)
-      ? result
-      : Array.isArray(result?.data)
-        ? result.data
-        : [];
+      const categoryData = Array.isArray(result)
+        ? result
+        : Array.isArray(result?.data)
+          ? result.data
+          : [];
 
-    setCategories(categoryData);
-  } catch (err) {
-    console.error("Fetch categories error:", err);
-    setError(err?.message || "Unable to load categories.");
-    setCategories([]);
-  }
-}, []);;
+      setCategories(categoryData);
+    } catch (err) {
+      console.error("Fetch categories error:", err);
+      setError(err?.message || "Unable to load categories.");
+      setCategories([]);
+    }
+  }, []);
 
   // Refresh products and categories.
   const refreshProducts = useCallback(async () => {
-    await Promise.all([
-      fetchProducts(),
-      fetchCategoriesData(),
-    ]);
+    await Promise.all([fetchProducts(), fetchCategoriesData()]);
   }, [fetchProducts, fetchCategoriesData]);
 
   // Load data when the provider mounts.
@@ -1028,18 +1005,14 @@ const fetchCategoriesData = useCallback(async () => {
   const handleRemoveExistingImage = (imageId) => {
     setExistingImages((prev) =>
       prev.filter(
-        (image) =>
-          image?.id !== imageId &&
-          image?.documentId !== imageId
-      )
+        (image) => image?.id !== imageId && image?.documentId !== imageId,
+      ),
     );
   };
 
   // Remove a newly selected local image.
   const handleRemoveNewImage = (index) => {
-    setImages((prev) =>
-      prev.filter((_, imageIndex) => imageIndex !== index)
-    );
+    setImages((prev) => prev.filter((_, imageIndex) => imageIndex !== index));
   };
 
   // Reset the product form.
@@ -1049,23 +1022,25 @@ const fetchCategoriesData = useCallback(async () => {
     setExistingImages([]);
     setUrlImages([]);
     setImageUrl("");
+
     setEditingProduct(null);
+    setEditingProductIndex(null);
+
     setError("");
     setSuccessMessage("");
   };
 
   // Load a product into the form for editing.
-  const handleEditProduct = (product,index) => {
-
+  const handleEditProduct = (product, index) => {
     if (!product) return;
-    setEditingProductId(product.documentId)
+
+    // Save the product's original position.
+    setEditingProductIndex(index);
     setEditingProduct(product);
 
     setFormData({
       name: product.name || "",
-      description: convertBlocksToDescription(
-        product.description
-      ),
+      description: convertBlocksToDescription(product.description),
       price: product.price ?? "",
       category:
         product.category?.documentId ||
@@ -1085,7 +1060,7 @@ const fetchCategoriesData = useCallback(async () => {
             ...image,
             url: image.url || "",
           }))
-        : []
+        : [],
     );
 
     setImages([]);
@@ -1125,9 +1100,7 @@ const fetchCategoriesData = useCallback(async () => {
         !Number.isInteger(Number(formData.price)) ||
         Number(formData.price) < 0
       ) {
-        throw new Error(
-          "Price must be a non-negative whole number."
-        );
+        throw new Error("Price must be a non-negative whole number.");
       }
 
       // Validate stock.
@@ -1136,9 +1109,7 @@ const fetchCategoriesData = useCallback(async () => {
         !Number.isInteger(Number(formData.stock)) ||
         Number(formData.stock) < 0
       ) {
-        throw new Error(
-          "Stock must be a non-negative whole number."
-        );
+        throw new Error("Stock must be a non-negative whole number.");
       }
 
       // Validate discount.
@@ -1146,72 +1117,55 @@ const fetchCategoriesData = useCallback(async () => {
 
       if (
         formData.isDiscountActive &&
-        (
-          !Number.isFinite(discountValue) ||
+        (!Number.isFinite(discountValue) ||
           discountValue < 0 ||
-          (
-            formData.discountType === "percentage" &&
-            discountValue > 100
-          )
-        )
+          (formData.discountType === "percentage" && discountValue > 100))
       ) {
         throw new Error(
-          "Enter a valid discount value. Percentage must be between 0 and 100."
+          "Enter a valid discount value. Percentage must be between 0 and 100.",
         );
       }
 
       // 1. Upload local images using the imported API function.
-    const uploadedPCImages = images.length
-  ? await uploadProductImages(images)
-  : [];
+      const uploadedPCImages = images.length
+        ? await uploadProductImages(images)
+        : [];
 
-const uploadedURLImages = [];
+      const uploadedURLImages = [];
 
-for (const item of urlImages) {
-  if (!item?.url) continue;
+      for (const item of urlImages) {
+        if (!item?.url) continue;
 
-  const result = await uploadImageFromUrl(item.url);
-  const file = result?.file || result;
+        const result = await uploadImageFromUrl(item.url);
+        const file = result?.file || result;
 
-  if (file?.id) {
-    uploadedURLImages.push(file);
-  }
-}
+        if (file?.id) {
+          uploadedURLImages.push(file);
+        }
+      }
 
-const localFiles = Array.isArray(uploadedPCImages)
-  ? uploadedPCImages
-  : [];
+      const localFiles = Array.isArray(uploadedPCImages)
+        ? uploadedPCImages
+        : [];
 
-const newImageIds = [
-  ...localFiles,
-  ...uploadedURLImages,
-]
-  .map((image) => image?.id)
-  .filter(Boolean);
+      const newImageIds = [...localFiles, ...uploadedURLImages]
+        .map((image) => image?.id)
+        .filter(Boolean);
 
-const existingImageIds = existingImages
-  .map((image) => image?.id)
-  .filter(Boolean);
+      const existingImageIds = existingImages
+        .map((image) => image?.id)
+        .filter(Boolean);
 
-const allImageIds = [
-  ...existingImageIds,
-  ...newImageIds,
-];
-
-     
+      const allImageIds = [...existingImageIds, ...newImageIds];
 
       if (allImageIds.length === 0) {
-        throw new Error(
-          "Please add at least one product image."
-        );
+        throw new Error("Please add at least one product image.");
       }
 
       // 5. Build product data for Strapi.
       const productData = {
         name: formData.name.trim(),
-        description: convertDescriptionToBlocks(
-          formData.description
-        ),
+        description: convertDescriptionToBlocks(formData.description),
         price: Number(formData.price),
         stock: Number(formData.stock),
         category: formData.category || null,
@@ -1222,41 +1176,78 @@ const allImageIds = [
           : 0,
         images: allImageIds,
       };
-
-      // 6. Create or update.
       const wasEditing = Boolean(editingProduct?.documentId);
 
       if (wasEditing) {
-        await updateProduct(
-          editingProduct.documentId,
-          productData
+        const documentId = editingProduct.documentId;
+        const originalIndex = editingProductIndex;
+
+        // Update the existing product in Strapi.
+        await updateProduct(documentId, productData);
+
+        // Fetch updated data without refreshing over our saved order.
+        const result = await getProducts();
+
+        const freshProducts = Array.isArray(result)
+          ? result
+          : Array.isArray(result?.data)
+            ? result.data
+            : [];
+
+        // Find the updated product by its stable documentId.
+        const updatedIndex = freshProducts.findIndex(
+          (product) => product.documentId === documentId,
         );
+
+        if (updatedIndex !== -1) {
+          const reorderedProducts = [...freshProducts];
+
+          // Remove the updated product from its fetched position.
+          const [updatedProduct] = reorderedProducts.splice(updatedIndex, 1);
+
+          // Put it back at its original list position.
+          const targetIndex =
+            originalIndex !== null && originalIndex !== undefined
+              ? Math.min(originalIndex, reorderedProducts.length)
+              : updatedIndex;
+
+          reorderedProducts.splice(targetIndex, 0, updatedProduct);
+
+          setProducts(reorderedProducts);
+          setTotalProducts(
+            result?.meta?.pagination?.total ?? reorderedProducts.length,
+          );
+        } else {
+          // Fallback if the updated product isn't found.
+          await fetchProducts();
+        }
+
+        // Refresh categories only; do not refresh products again.
+        await fetchCategoriesData();
       } else {
+        // Create a new product and refresh the list normally.
         await createProduct(productData);
+        await refreshProducts();
       }
 
-      // 7. Refresh the product list.
-      await refreshProducts();
-
-      // 8. Clear the form and show confirmation.
+      // Reset the form after successful save.
       setFormData({ ...emptyForm });
       setImages([]);
       setExistingImages([]);
       setUrlImages([]);
       setImageUrl("");
       setEditingProduct(null);
+      setEditingProductIndex(null);
 
       setSuccessMessage(
         wasEditing
           ? "Product updated successfully!"
-          : "Product created successfully!"
+          : "Product created successfully!",
       );
     } catch (err) {
       console.error("Product save error:", err);
 
-      setError(
-        err?.message || "Unable to save product."
-      );
+      setError(err?.message || "Unable to save product.");
     } finally {
       setLoading(false);
     }
@@ -1272,7 +1263,7 @@ const allImageIds = [
     }
 
     const confirmed = window.confirm(
-      `Are you sure you want to delete "${product?.name}"?`
+      `Are you sure you want to delete "${product?.name}"?`,
     );
 
     if (!confirmed) return;
@@ -1289,9 +1280,7 @@ const allImageIds = [
     } catch (err) {
       console.error("Delete product error:", err);
 
-      setError(
-        err?.message || "Unable to delete product."
-      );
+      setError(err?.message || "Unable to delete product.");
     } finally {
       setLoading(false);
     }
@@ -1311,10 +1300,7 @@ const allImageIds = [
     }
 
     // Otherwise use the product's discount.
-    if (
-      product?.isDiscountActive &&
-      Number(product.discountValue) > 0
-    ) {
+    if (product?.isDiscountActive && Number(product.discountValue) > 0) {
       return {
         active: true,
         type: product.discountType || "percentage",
@@ -1341,10 +1327,7 @@ const allImageIds = [
     if (!discount.active) return price;
 
     if (discount.type === "percentage") {
-      return Math.max(
-        0,
-        price - (price * discount.value) / 100
-      );
+      return Math.max(0, price - (price * discount.value) / 100);
     }
 
     if (discount.type === "fixed") {
@@ -1410,9 +1393,7 @@ const allImageIds = [
 
   // Remove a pending URL image.
   const handleRemoveImageUrl = (index) => {
-    setUrlImages((prev) =>
-      prev.filter((_, i) => i !== index)
-    );
+    setUrlImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -1444,6 +1425,7 @@ const allImageIds = [
 
         // Editing state.
         editingProduct,
+        editingProductIndex,
         isEditing,
 
         // Product and category data.
