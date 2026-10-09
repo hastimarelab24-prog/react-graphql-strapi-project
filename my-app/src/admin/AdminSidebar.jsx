@@ -129,18 +129,18 @@ const AdminSidebar = ({
           <button
             type="button"
             onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("user");
+              // localStorage.removeItem("token");
+              // localStorage.removeItem("user");
 
-              window.dispatchEvent(new Event("authChange"));
+              // window.dispatchEvent(new Event("authChange"));
 
-              window.location.href = "/login";
+              window.location.href = "/";
             }}
             className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 transition hover:bg-red-50"
           >
             <FiLogOut size={19} />
 
-            <span>Logout</span>
+            <span>Home</span>
           </button>
         </div>
       </aside>

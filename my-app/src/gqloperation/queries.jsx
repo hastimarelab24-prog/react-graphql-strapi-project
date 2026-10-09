@@ -1,77 +1,43 @@
-
 import { gql } from "@apollo/client";
-
 
 // GET CATEGORIES
 
 export const GET_CATEGORY = gql`
-
   query GetCategories {
-
     categories {
       name
     }
-
   }
-
 `;
-
 
 // GET PRODUCTS BY CATEGORY
 
 export const GET_PRODUCTS_BY_CATEGORY = gql`
-
-  query GetProductsByCategory(
-    $categoryName: String!
-  ) {
-
-    products(
-      filters: {
-        category: {
-          name: {
-            eq: $categoryName
-          }
-        }
-      }
-    ) {
-
+  query GetProductsByCategory($categoryName: String!) {
+    products(filters: { category: { name: { eq: $categoryName } } }) {
       documentId
       name
       price
+      description
       stock
       description
 
       images {
         url
       }
-
     }
-
   }
-
 `;
-
 
 // SEARCH PRODUCTS
 
 export const SEARCH_PRODUCTS = gql`
-
-  query SearchProducts(
-    $search: String!
-  ) {
-
+  query SearchProducts($search: String!) {
     products(
-      filters: {
-        name: {
-          containsi: $search
-        }
-      }
+      filters: { name: { containsi: $search } }
 
-      pagination: {
-        limit: 100
-      }
+      pagination: { limit: 100 }
     ) {
-
       documentId
       name
       price
@@ -81,28 +47,18 @@ export const SEARCH_PRODUCTS = gql`
       images {
         url
       }
-
     }
-
   }
-
 `;
-
 
 // GET ALL PRODUCTS
 
 export const GET_ALL_PRODUCTS = gql`
-
   query GetAllProducts {
-
-    products(
-      pagination: {
-        limit: 100
-      }
-    ) {
-
+    products {
       documentId
       name
+      description
       price
       stock
 
@@ -111,33 +67,26 @@ export const GET_ALL_PRODUCTS = gql`
       discountValue
 
       category {
+        documentId
         name
+        
       }
 
       images {
         url
       }
-
     }
-
   }
-
 `;
-
-
 // GLOBAL OFFER
 
 export const GET_GLOBAL_OFFER = gql`
-
   query GetGlobalOffer {
-
     globalOffer {
       name
       isActive
       discountType
       discountValue
     }
-
   }
-
 `;

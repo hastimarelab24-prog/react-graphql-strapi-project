@@ -160,14 +160,15 @@ function Category() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {products.map((product) => {
-                    const imageUrl = product.images?.[0]?.url || "";
+                  {products.map((product) => 
+            
 
-                    return (
+                     (
                       <Card
                         documentId={product.documentId}
                         name={product.name}
                         price={product.price}
+                        description={product.description}
                         stock={product.stock}
                         imageUrl={product.images?.[0]?.url}
                         isDiscountActive={product.isDiscountActive}
@@ -179,8 +180,8 @@ function Category() {
                         categoryDiscountType={product.category?.discountType}
                         categoryDiscountValue={product.category?.discountValue}
                       />
-                    );
-                  })}
+                    )
+                  )}
                 </div>
               )}
             </>

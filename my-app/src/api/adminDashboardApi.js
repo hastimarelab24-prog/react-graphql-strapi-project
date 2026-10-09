@@ -1,80 +1,97 @@
 const API_URL = "http://localhost:1337";
 
-// TOKEN
-
 const getToken = () => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    throw new Error("Authentication token not found");
-  }
-
-  return token;
+  return localStorage.getItem("token");
 };
 
-// HEADERS
+const getHeaders = () => {
+  const token = getToken();
 
-const getHeaders = () => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${getToken()}`,
-});
+  return {
+    "Content-Type": "application/json",
 
-// RESPONSE HANDLER
+    ...(token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {}),
+  };
+};
 
-const handleResponse = async (response) => {
-  const result = await response.json();
+/* =====================================================
+   USERS
+===================================================== */
 
-  if (!response.ok) {
-    throw new Error(
-      result?.error?.message ||
-        result?.message ||
-        "Something went wrong"
+export const getDashboardUsers =
+  async () => {
+    const response = await fetch(
+      `${API_URL}/api/users?pagination[pageSize]=100`,
+      {
+        method: "GET",
+        headers: getHeaders(),
+      }
     );
-  }
 
-  return result;
-};
+    if (!response.ok) {
+      const text =
+        await response.text();
 
-// GET USERS
-
-export const getDashboardUsers = async () => {
-  const response = await fetch(
-    `${API_URL}/api/users?pagination[pageSize]=100`,
-    {
-      method: "GET",
-      headers: getHeaders(),
+      throw new Error(
+        `Users request failed: ${response.status} ${text}`
+      );
     }
-  );
 
-  return handleResponse(response);
-};
+    return response.json();
+  };
 
-// GET ORDERS COUNT
+/* =====================================================
+   ORDERS
+===================================================== */
 
-export const getDashboardOrders = async () => {
-  const response = await fetch(
-    `${API_URL}/api/orders?pagination[pageSize]=1`,
-    {
-      method: "GET",
-      headers: getHeaders(),
+export const getDashboardOrders =
+  async () => {
+    const response = await fetch(
+      `${API_URL}/api/orders?pagination[pageSize]=100`,
+      {
+        method: "GET",
+        headers: getHeaders(),
+      }
+    );
+
+    if (!response.ok) {
+      const text =
+        await response.text();
+
+      throw new Error(
+        `Orders request failed: ${response.status} ${text}`
+      );
     }
-  );
 
-  return handleResponse(response);
-};
+    return response.json();
+  };
 
-// GET PRODUCTS
+/* =====================================================
+   PRODUCTS
+===================================================== */
 
-export const getDashboardProducts = async () => {
-  const response = await fetch(
-    `${API_URL}/api/products?populate=*&pagination[pageSize]=100`,
-    {
-      method: "GET",
-      headers: getHeaders(),
+export const getDashboardProducts =
+  async () => {
+    const response = await fetch(
+      `${API_URL}/api/products?populate=*&pagination[pageSize]=100`,
+      {
+        method: "GET",
+        headers: getHeaders(),
+      }
+    );
+
+    if (!response.ok) {
+      const text =
+        await response.text();
+
+      throw new Error(
+        `Products request failed: ${response.status} ${text}`
+      );
     }
-  );
 
-  return handleResponse(response);
-};
-
-export { API_URL };
+    return response.json();
+  };
